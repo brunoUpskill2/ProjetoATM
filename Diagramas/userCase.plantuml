@@ -13,9 +13,12 @@ class ATMUser {
     -account : BankAccount
     -IBAN : String
     -BAN : String
+    -NIF : String
     +initiateTransaction()
     +authenticate()
     +checkBalance()
+    +initiateTransfer(recipientIBAN: String, amount: float)
+    +queryTransactionHistory()
 }
 
 class ATMAdmin {
@@ -59,6 +62,20 @@ class Payment {
     +processPayment()
 }
 
+class Transaction {
+    -transaction_id : int
+    -timestamp : String
+    -amount : float
+    -type : TransactionType
+    -recipientIBAN : String
+    +processTransaction()
+}
+
+class TransactionType {
+    -type_id : int
+    -name : String
+    +execute()
+}
 class Receipt {
     -receipt_id : int
     -content : String
@@ -71,10 +88,15 @@ ATMUser -- BankAccount : owns
 ATMUser -- Deposit : initiates
 ATMUser -- Withdrawal : initiates
 ATMUser -- Payment : initiates
+ATMUser -- Transaction : initiates
 BankAccount -- Deposit : participates
 BankAccount -- Withdrawal : participates
+BankAccount -- Transaction : participates
 Payment -- Receipt : generates
 Deposit -- Receipt : generates
 Withdrawal -- Receipt : generates
+Transaction -- TransactionType : has
+Transaction -- Receipt : generates
+TransactionType -- ATM : executes
 
 @enduml
