@@ -1,9 +1,21 @@
-@startuml UserCaseATM
+@startuml ATMSystem
+
 class ATM {
-    -id : int 
+    -id : int
     -location : String
     +performTransaction()
 }
+
+class ATMUser {
+    -id : int
+    -username : String
+    -password : String
+    -account : BankAccount
+    +initiateTransaction()
+    +authenticate()
+    +checkBalance()
+}
+
 class ATMAdmin {
     -admin_id : int
     -username : String
@@ -12,36 +24,36 @@ class ATMAdmin {
     +monitorTransactions()
 }
 
-class Client {
-    -id : int
-    -frist_name : String
-    -last_name : String
-    -email : String
-    -phone_number : String
-    -address : String
-    +initiateTransaction()
-    +authenticate()
-}
-
-class BankAccount { 
-    -idBankAccount : int
-    -idTransaction : int
+class BankAccount {
+    -account_id : int
     -IBAN : String
-    -Balance : float 
+    -balance : float
+    +deposit()
+    +withdraw()
+    +transfer()
 }
 
-class Transaction {
-    -idTransaction : int
-    -type : String
+class Deposit {
+    -transaction_id : int
     -timestamp : String
     -amount : float
-    +processTransaction()
+    +processDeposit()
 }
 
-class TypeTransacao {
-    -idType : int 
-    -name : String
-    +execute()    
+class Withdrawal {
+    -transaction_id : int
+    -timestamp : String
+    -amount : float
+    +processWithdrawal()
+}
+
+class Payment {
+    -transaction_id : int
+    -timestamp : String
+    -amount : float
+    -recipientIBAN : String
+    -description : String
+    +processPayment()
 }
 
 class Receipt {
@@ -49,10 +61,16 @@ class Receipt {
     -content : String
 }
 
-ATM -- Client : interacts
+ATM -- ATMUser : interacts
 ATM -- ATMAdmin : managed by
-Client -- Transaction : initiates 
-Transaction -- TransactionType : has
-Transaction -- Receipt : generates
-TransactionType -- ATM : executes
+ATMUser -- BankAccount : owns
+ATMUser -- Deposit : initiates
+ATMUser -- Withdrawal : initiates
+ATMUser -- Payment : initiates
+BankAccount -- Deposit : participates
+BankAccount -- Withdrawal : participates
+Payment -- Receipt : generates
+Deposit -- Receipt : generates
+Withdrawal -- Receipt : generates
+
 @enduml
