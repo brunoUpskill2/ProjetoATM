@@ -11,6 +11,8 @@ class ATMUser {
     -username : String
     -password : String
     -account : BankAccount
+    -IBAN : String
+    -BAN : String
     +initiateTransaction()
     +authenticate()
     +checkBalance()
@@ -28,6 +30,7 @@ class BankAccount {
     -account_id : int
     -IBAN : String
     -balance : float
+    -holder : ATMUser
     +deposit()
     +withdraw()
     +transfer()
@@ -59,6 +62,7 @@ class Payment {
 class Receipt {
     -receipt_id : int
     -content : String
+    extends Document
 }
 
 ATM -- ATMUser : interacts
