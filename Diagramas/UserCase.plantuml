@@ -1,0 +1,27 @@
+@startuml UserCaseATM
+ 
+rectangle "ATM System" {
+  rectangle "ATM" as ATMClass
+  rectangle "ATMUser" as ATMUserClass
+  rectangle "ATMAdmin" as ATMAdminClass
+  rectangle "BankAccount" as BankAccountClass
+ 
+  ATMClass -- ATMUserClass : interacts
+  ATMClass -- ATMAdminClass : managed by
+  ATMUserClass -- BankAccountClass : owns
+ 
+  ATMUserClass --|> "initiateTransaction()" : <<use>>
+  ATMUserClass --|> "authenticate()" : <<use>>
+  ATMUserClass --|> "checkBalance()" : <<use>>
+  ATMUserClass --|> "initiateTransfer(recipientIBAN: String, amount: float)" : <<use>>
+  ATMUserClass --|> "queryTransactionHistory()" : <<use>>
+ 
+  ATMAdminClass --|> "manageATM()" : <<use>>
+  ATMAdminClass --|> "monitorTransactions()" : <<use>>
+ 
+  BankAccountClass --|> "deposit()" : <<use>>
+  BankAccountClass --|> "withdraw()" : <<use>>
+  BankAccountClass --|> "transfer()" : <<use>>
+}
+ 
+@enduml

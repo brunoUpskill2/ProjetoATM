@@ -14,11 +14,8 @@ class ATMUser {
     -IBAN : String
     -BAN : String
     -NIF : String
-    +initiateTransaction()
     +authenticate()
-    +checkBalance()
-    +initiateTransfer(recipientIBAN: String, amount: float)
-    +queryTransactionHistory()
+    
 }
 
 class ATMAdmin {
@@ -37,6 +34,10 @@ class BankAccount {
     +deposit()
     +withdraw()
     +transfer()
+    +initiateTransaction()
+    +checkBalance()
+    +initiateTransfer(recipientIBAN: String, amount: float)
+    +queryTransactionHistory()
 }
 
 class Deposit {
