@@ -38,6 +38,7 @@ class BankAccount {
     +checkBalance()
     +initiateTransfer(recipientIBAN: String, amount: float)
     +queryTransactionHistory()
+    +generateReceipt()
 }
 
 class Deposit {
@@ -45,6 +46,7 @@ class Deposit {
     -timestamp : String
     -amount : float
     +processDeposit()
+    +generateReceipt()
 }
 
 class Withdrawal {
@@ -52,6 +54,7 @@ class Withdrawal {
     -timestamp : String
     -amount : float
     +processWithdrawal()
+    +generateReceipt()
 }
 
 class Payment {
@@ -61,6 +64,7 @@ class Payment {
     -recipientIBAN : String
     -description : String
     +processPayment()
+    +generateReceipt()
 }
 
 class Transaction {
@@ -70,34 +74,49 @@ class Transaction {
     -type : TransactionType
     -recipientIBAN : String
     +processTransaction()
+    +generateReceipt()
 }
 
 class TransactionType {
     -type_id : int
     -name : String
+    -state: String
     +execute()
 }
 class Receipt {
     -receipt_id : int
     -content : String
+    -transaction_id : Transaction
+    -transaction_type : TransactionType
+    -timestamp : String
+    -user_id : ATMUser
+    -atm_location : ATM
     extends Document
 }
 
-ATM -- ATMUser : interacts
-ATM -- ATMAdmin : managed by
-ATMUser -- BankAccount : owns
-ATMUser -- Deposit : initiates
-ATMUser -- Withdrawal : initiates
-ATMUser -- Payment : initiates
-ATMUser -- Transaction : initiates
-BankAccount -- Deposit : participates
-BankAccount -- Withdrawal : participates
-BankAccount -- Transaction : participates
-Payment -- Receipt : generates
-Deposit -- Receipt : generates
-Withdrawal -- Receipt : generates
-Transaction -- TransactionType : has
-Transaction -- Receipt : generates
-TransactionType -- ATM : executes
 
+
+Deposit -- Transaction : is a
+Withdrawal -- Transaction : is a
+Payment -- Transaction : is a
+Transaction -- BankAccount : involves
+BankAccount -- Transaction : has
+BankAccount -- Receipt : has
+ATMUser -- Receipt : generates
+ATMUser -- BankAccount : has
+ATMUser -- Transaction : has
+BankAccount -- Transaction : has
+Transaction -- TransactionType : has
+TransactionType -- ATMUser : requires
+Receipt -- Transaction : identifies
+Receipt -- Deposit : identifies
+Receipt -- Withdrawal : identifies
+Receipt -- Payment : identifies
+TransactionType -- Transaction : identifies
+BankAccount -- ATMUser : belongs
+BankAccount -- ATMAdmin : belongs
+ATMAdmin -- ATM : manages
+
+Receipt -- Transaction : is optional
 @enduml
+
