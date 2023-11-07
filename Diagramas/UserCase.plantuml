@@ -1,27 +1,33 @@
 @startuml UserCaseATM
- 
+left to right direction
+actor "ATM User" as User
+actor "ATM Admin" as Admin
+
 rectangle "ATM System" {
-  rectangle "ATM" as ATMClass
-  rectangle "ATMUser" as ATMUserClass
-  rectangle "ATMAdmin" as ATMAdminClass
-  rectangle "BankAccount" as BankAccountClass
- 
-  ATMClass -- ATMUserClass : interacts
-  ATMClass -- ATMAdminClass : managed by
-  ATMUserClass -- BankAccountClass : owns
- 
-  ATMUserClass --|> "initiateTransaction()" : <<use>>
-  ATMUserClass --|> "authenticate()" : <<use>>
-  ATMUserClass --|> "checkBalance()" : <<use>>
-  ATMUserClass --|> "initiateTransfer(recipientIBAN: String, amount: float)" : <<use>>
-  ATMUserClass --|> "queryTransactionHistory()" : <<use>>
- 
-  ATMAdminClass --|> "manageATM()" : <<use>>
-  ATMAdminClass --|> "monitorTransactions()" : <<use>>
- 
-  BankAccountClass --|> "deposit()" : <<use>>
-  BankAccountClass --|> "withdraw()" : <<use>>
-  BankAccountClass --|> "transfer()" : <<use>>
+  usecase "Authenticate" as Authenticate
+  usecase "Manage ATM" as ManageATM
+  usecase "Monitor Transactions" as MonitorTransactions
+
+  User --> Authenticate : Initiates
+  Admin --> ManageATM : Manages
+  Admin --> MonitorTransactions : Monitors
+
+  rectangle "Bank Account" {
+    usecase "Deposit" as Deposit
+    usecase "Withdraw" as Withdraw
+    usecase "Transfer" as Transfer
+    usecase "Check Balance" as CheckBalance
+    usecase "Query Transaction History" as QueryTransactionHistory
+    usecase "Generate Receipt" as GenerateReceipt
+
+    User --> Deposit : Initiates
+    User --> Withdraw : Initiates
+    User --> Transfer : Initiates
+    User --> CheckBalance : Initiates
+    User --> QueryTransactionHistory : Initiates
+    GenerateReceipt --> User : Provides Receipt
+  }
 }
- 
+
 @enduml
+
