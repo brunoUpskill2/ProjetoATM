@@ -69,7 +69,7 @@ class Payment {
 
 class Transaction {
     -transaction_id : int
-    -timestamp : String
+    -timestamp : DateTime
     -amount : float
     -type : TransactionType
     -recipientIBAN : String
@@ -80,7 +80,7 @@ class Transaction {
 class TransactionType {
     -type_id : int
     -name : String
-    -state: String
+    -status : String
     +execute()
 }
 class Receipt {
