@@ -20,16 +20,36 @@ def login_view(request):
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
+
+
+
 def pin_recovery_view(request):
     if request.method == 'POST':
         form = PinRecoveryForm(request.POST)
-        if form.is valid():
+        if form.is_valid():
             # Lógica para enviar um e-mail de recuperação de PIN.
-            # Implemente a lógica de recuperação de PIN aqui.
-            return redirect('email_enviado')
+            # Vou adicionar uma lógica simples aqui para enviar um e-mail com o PIN.
+            
+            # Suponha que você tenha um atributo 'email' no seu formulário.
+            user_email = form.cleaned_data['email']
+            # Gere um PIN aleatório (você pode usar outras bibliotecas para isso).
+            import random
+            pin = ''.join(random.choice('0123456789') for i in range(6))
+
+            # Agora você pode enviar um e-mail com o PIN.
+            # Certifique-se de configurar suas configurações de e-mail no settings.py.
+            from django.core.mail import send_mail
+            subject = 'Recuperação de PIN'
+            message = f'Seu novo PIN é: {pin}'
+            from_email = 'seu_email@gmail.com'  # Substitua pelo seu e-mail
+            recipient_list = [user_email]
+            send_mail(subject, message, from_email, recipient_list)
+
+            return redirect('email_enviado')  # Redirecionar após o e-mail ser enviado
     else:
         form = PinRecoveryForm()
     return render(request, 'pin_recovery.html', {'form': form})
+
 
 def change_pin_view(request):
     if request.method == 'POST':
