@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from .models import Account, Transaction, Receipt, ATMUser, TransactionType, ATM, Bill, ServiceProviderAccount
+from .models import BankAccount, Transaction, Receipt, ATMUser, TransactionType
 from .forms import DepositForm, TransferForm, WithdrawalForm, BillPaymentForm, ChangePinForm, BalanceInquiryForm
 
 @login_required
@@ -13,12 +13,18 @@ def deposit(request):
     if request.method == 'POST':
         form = DepositForm(request.POST)
         if form.is_valid():
+            user = request.user
             amount = form.cleaned_data['amount']
-            account = Account.objects.get(owner=request.user)
+            account = BankAccount.objects.get(holders=user)
             account.balance += amount
             account.save()
-            Transaction.objects.create(user=request.user, account=account, transaction_type=TransactionType.objects.get(name='Deposit'), amount=amount)
-            Receipt.objects.create(user=request.user, content=f"Deposited ${amount}", transaction=Transaction.objects.filter(user=request.user).last())
+            Transaction.objects.create(amount=amount, type=TransactionType.objects.get(name='Deposit'),recipientIBAN=account.IBAN)
+            Receipt.objects.create(user=request.user,
+                                content=f"Deposited ${amount}",
+                                transaction=Transaction.objects.filter(user=request.user).last(),
+                                transaction_type= TransactionType.objects.filter(user=request.user).last(),
+                                user_id=request.user)
+            
             return redirect('success_page')
     else:
         form = DepositForm()

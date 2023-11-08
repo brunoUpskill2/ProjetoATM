@@ -1,39 +1,29 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # Create your models here.
 
-class HolderType(models.Model):
-    holderType_id = models.IntegerField(max_length=20)
-    name = models.CharField(max_length=50)
-    #1st Holder 
-    #2nd Holder 
-    #Mover 
+class Admin(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE,null=True,blank=True)
+    name = models.CharField(max_length=200,unique=True)
+    password = models.CharField(max_length=20)
+    managed_machines = models.ManyToManyField('ATMMachine')
 
-class ATMUser(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    username = models.CharField(max_length=255)
-    password = models.CharField(max_length=50)
-    IBAN = models.CharField(max_length=25)
-    BAN = models.CharField(max_length=21)
-    NIF = models.CharField(max_length=9)    
+class ATMMachine(models.Model):
+    STATUS_CHOICES = ("active","Active",
+                      "deactivated","Deactivated")
+    
+    atm_machine_uid = models.CharField(
+        primary_key=True,max_length=16,unique=True
+        )
+    
+    current_balance = models.BigIntegerField()
+    
+    location = models.CharField(max_length=100)
+    
+    mininum_balance = models.BigIntegerField()
 
-class BankAccount(models.Model):
-    account_id = models.AutoField(primary_key=True)
-    holders = models.ManyToManyField(ATMUser,through='Holder')
-    balance = models.FloatField(decimal_place=2)
-    IBAN = models.CharField(max_length=25)
-
-class Holder(models.Model):
-    user = models.ForeignKey(ATMUser,on_delete=models.CASCADE)
-    account = models.ForeignKey(BankAccount,on_delete=models.CASCADE)
-    type = models.ForeignKey(HolderType,on_delete=models.CASCADE)
-
-
-
-
-# 1 utilizador pode ser 1 titular
-
-# 1 titular tem 1 conta
-
-# 1 conta pode ter 1 ou mais titulares
-
+    status = models.CharField(
+        max_length=15,
+        choices = STATUS_CHOICES,
+        default='active'
+    )
