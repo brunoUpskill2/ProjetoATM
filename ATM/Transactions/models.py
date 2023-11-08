@@ -1,5 +1,5 @@
 from django.db import models
-from .models import ATMUser,ATM 
+from .models import ATMUser,ATM,BankAccount
 
 # Create your models here.
 class TransactionType(models.Model):
@@ -24,11 +24,9 @@ class Deposit(models.Model):
     transaction_id = models.ForeignKey(Transaction)
     timestamp = models.DateTimeField(auto_now_add=True)
     amount = models.FloatField(max_length=25,decimal_places=2)
+    account = models.ForeignKey(BankAccount,on_delete=models.CASCADE)
 
-    def processDeposit():
-        pass
-    def generateReceipt():
-        pass
+    
 
 class Withdrawal(models.Model):
     withdrawal_id = models.IntegerField(primary_key=True,max_length=250)
