@@ -1,6 +1,6 @@
 from django.db import models
-from .models import ATMUser,ATM,BankAccount
-
+from User.models import ATMUser,BankAccount
+from Admin.models import ATMMachine
 # Create your models here.
 class TransactionType(models.Model):
     type_id = models.IntegerField(max_length=25)
@@ -14,26 +14,25 @@ class TransactionType(models.Model):
 class Transaction(models.Model):
     transaction_id = models.IntegerField(max_length=50,primary_key=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    amount = models.FloatField(max_length=25,decimal_places=2)
+    amount = models.DecimalField(max_digits=7,decimal_places=2)
+    
     type = models.ForeignKey(TransactionType,on_delete=models.CASCADE)
     recipientIBAN = models.CharField(max_length=25)
     
 
 class Deposit(models.Model):
     deposit_id = models.IntegerField(primary_key=True,max_length=250)
-    transaction_id = models.ForeignKey(Transaction)
+    transaction_id = models.ForeignKey(Transaction,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    amount = models.FloatField(max_length=25,decimal_places=2)
+    amount = models.DecimalField(max_digits=7,decimal_places=2)
     account = models.ForeignKey(BankAccount,on_delete=models.CASCADE)
-
-    
 
 class Withdrawal(models.Model):
     withdrawal_id = models.IntegerField(primary_key=True,max_length=250)
-    transaction_id = models.ForeignKey(Transaction)
+    transaction_id = models.ForeignKey(Transaction,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    amount = models.FloatField(max_length=25,decimal_places=2)
-
+    amount = models.DecimalField(max_digits=7,decimal_places=2)
+    
     def processWithdrawal():
         pass
     def generateReceipt():
@@ -43,7 +42,7 @@ class Payment(models.Model):
     payment_id = models.IntegerField(primary_key=True,max_length=250)
     transaction_id = models.ForeignKey(Transaction,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    amount = models.FloatField(max_length=25,decimal_places=2)
+    amount = models.DecimalField(max_digits=7,decimal_places=2)
     recipientIBAN = models.CharField(max_length=25)
     description = models.CharField(max_length=255)
 
@@ -59,14 +58,8 @@ class Receipt(models.Model):
     transaction_type = models.ForeignKey(TransactionType,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     user_id = models.ForeignKey(ATMUser,on_delete=models.CASCADE)
-    atm_location = models.ForeignKey(ATM,on_delete=models.CASCADE)
+    atm_location = models.ForeignKey(ATMMachine,on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.receipt_id},
-        {self.content},
-        {self.transaction_id},
-        {self.timestamp},
-        {self.user_id},
-        {self.atm_location}
-        "
+        return f"{self.receipt_id},{self.content},{self.transaction_id},{self.timestamp},{self.user_id},{self.atm_location}"
     

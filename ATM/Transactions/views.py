@@ -37,8 +37,8 @@ def transfer(request):
         if form.is_valid():
             recipientIBAN = form.cleaned_data['recipientIBAN']
             amount = form.cleaned_data['amount']
-            sender_account = Account.objects.get(owner=request.user)
-            recipient_account = Account.objects.get(account_number=recipientIBAN)
+            sender_account = BankAccount.objects.get(owner=request.user)
+            recipient_account = BankAccount.objects.get(account_number=recipientIBAN)
             if sender_account.balance >= amount:
                 sender_account.balance -= amount
                 sender_account.save()
@@ -59,7 +59,7 @@ def withdrawal(request):
         form = WithdrawalForm(request.POST)
         if form.is_valid():
             amount = form.cleaned_data['amount']
-            account = Account.objects.get(owner=request.user)
+            account = BankAccount.objects.get(owner=request.user)
             if account.balance >= amount:
                 account.balance -= amount
                 account.save()
@@ -81,12 +81,11 @@ def bill_payment(request):
             amount = form.cleaned_data['amount']
             due_date = form.cleaned_data['due_date']
             try:
-                payee_account = ServiceProviderAccount.objects.get(name=payee_name)
-                account = Account.objects.get(owner=request.user)
+                account = BankAccount.objects.get(owner=request.user)
                 if account.balance >= amount:
                     account.balance -= amount
                     account.save()
-                    Bill.objects.create(payee=payee_account, amount=amount, due_date=due_date)
+                    Bill.objects.create( amount=amount, due_date=due_date)
                     Transaction.objects.create(user=request.user, account=account, transaction_type=TransactionType.objects.get(name='Bill Payment'), amount=amount, recipientIBAN=payee_account.account_number)
                     Receipt.objects.create(user=request.user, content=f"Paid ${amount} to {payee_name} (Bill Payment)", transaction=Transaction.objects.filter(user=request.user).last())
                     return redirect('success_page')

@@ -20,7 +20,7 @@ class ATMUser(models.Model):
 class BankAccount(models.Model):
     account_id = models.AutoField(primary_key=True)
     holders = models.ManyToManyField(ATMUser,through='Holder')
-    balance = models.FloatField(decimal_place=2)
+    balance = models.DecimalField(max_digits=7,decimal_places=2)
     IBAN = models.CharField(max_length=25)
 
 class Holder(models.Model):
