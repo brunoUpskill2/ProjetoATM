@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h1>Welcome to Your Banking App</h1>
+    <p>You are logged in as {{ user.username }}.</p>
+    <a href="{% url 'deposit' %}" class="btn btn-primary">Make a Deposit</a>
+    <a href="{% url 'withdrawal' %}" class="btn btn-primary">Make a Withdrawal</a>
+    <a href="{% url 'transfer' %}" class="btn btn-primary">Make a Transfer</a>
+    <a href="{% url 'bill_payment' %}" class="btn btn-primary">Pay a Bill</a>
+    <a href="{% url 'change_pin' %}" class="btn btn-primary">Change PIN</a>
+    <a href="{% url 'balance_inquiry' %}" class="btn btn-primary">Balance Inquiry</a>
+    <a href="{% url 'transaction_history' %}" class="btn btn-primary">Transaction History</a>
+</div>
+{% endblock %}

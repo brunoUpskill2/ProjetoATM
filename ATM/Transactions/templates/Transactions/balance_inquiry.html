@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <h1>Balance Inquiry</h1>
+    <p>Your current account balance is: ${{ balance }}</p>
+    
+    <label for="generate_receipt">Generate Receipt:</label>
+    <input type="checkbox" name="generate_receipt" id="generate_receipt">
+    
+    <div class="row">
+        <div class="col">
+            <a href="{% url 'user-home' %}" class="btn btn-primary mt-5">Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

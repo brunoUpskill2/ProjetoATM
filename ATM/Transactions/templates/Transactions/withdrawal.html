@@ -1,20 +1,27 @@
-{% extends "Transactions/base.html" %}
-{% load static %} 
+{% extends "base.html" %}
+{% load static %}
 
 {% block content %}
-    <h1> Cash Withdrawal </h1>
-    <form action="/user/cash-withdrawal" method="POST"> 
+    <h1>Withdrawal</h1>
+    <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button class="btn btn-primary" type="submit"> Withdraw </button> 
-    </form>
-    {% if message %}
-    <p class="mt-5"> {{ message }} </p>
-    {% endif %} 
 
-    <div class="row"> 
-        <div class="col"> 
-            <a href="{% url 'user-home' %}" class="btn btn-primary mt-5"> Back </a> 
+        <button type="submit" class="btn btn-primary">Withdraw</button>
+    </form>
+
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <strong>Error:</strong> {{ form.errors }}
         </div>
-    </div> 
+    {% endif %}
+
+    {% if request.POST and not form.errors %}
+        <div class="alert alert-success">
+            <strong>Success:</strong> Your withdrawal was successful!
+        </div>
+        <label for="generate_receipt">Generate Receipt:</label>
+        <input type="checkbox" name="generate_receipt" id="generate_receipt">
+    {% endif %}
+</div>
 {% endblock %}
