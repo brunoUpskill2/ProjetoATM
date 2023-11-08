@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Mudança de PIN{% endblock %}
+
+{% block content %}
+    <h1>Mudança de PIN</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Mudar PIN</button>
+    </form>
+{% endblock %}

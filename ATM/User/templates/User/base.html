@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Meu Aplicativo{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'pin_recovery' %}">Recuperação de PIN</a></li>
+                <li><a href="{% url 'change_pin' %}">Mudança de PIN</a></li>
+                <li><a href="{% url 'create_user' %}">Criar Utilizador</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

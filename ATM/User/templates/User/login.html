@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block title %}Recuperação de PIN por Email{% endblock %}
+
+{% block content %}
+    <h1>Recuperação de PIN por Email</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Enviar Email de Recuperação</button>
+    </form>
+{% endblock %}
