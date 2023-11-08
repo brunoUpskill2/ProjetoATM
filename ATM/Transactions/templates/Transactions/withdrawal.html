@@ -1,0 +1,20 @@
+{% extends "Transactions/base.html" %}
+{% load static %} 
+
+{% block content %}
+    <h1> Cash Withdrawal </h1>
+    <form action="/user/cash-withdrawal" method="POST"> 
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit"> Withdraw </button> 
+    </form>
+    {% if message %}
+    <p class="mt-5"> {{ message }} </p>
+    {% endif %} 
+
+    <div class="row"> 
+        <div class="col"> 
+            <a href="{% url 'user-home' %}" class="btn btn-primary mt-5"> Back </a> 
+        </div>
+    </div> 
+{% endblock %}
