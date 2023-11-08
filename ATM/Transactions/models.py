@@ -71,3 +71,4 @@ class Receipt(models.Model):
         {self.user_id},
         {self.atm_location}
         "
+    
