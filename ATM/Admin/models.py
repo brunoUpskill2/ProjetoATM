@@ -1,6 +1,7 @@
 from django.db import models
 
 # Create your models here.
+<<<<<<< HEAD
 class HolderType(models.Model):
     holderType_id = models.IntegerField(max_length=20)
     name = models.CharField(max_length=50)
@@ -35,3 +36,5 @@ class Holder(models.Model):
 # 1 titular tem 1 conta
 
 # 1 conta pode ter 1 ou mais titulares
+=======
+>>>>>>> 25ca0d4587669e85d6b57819e9b463f627e45bc4
