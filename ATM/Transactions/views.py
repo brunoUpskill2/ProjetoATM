@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from .models import BankAccount, Transaction, Receipt, ATMUser, TransactionType
-from .forms import DepositForm, TransferForm, WithdrawalForm, BillPaymentForm, ChangePinForm, BalanceInquiryForm
+from .models import BankAccount, Transaction, Receipt, ATMUser, TransactionType, Payment
+from .forms import DepositForm, TransferForm, WithdrawalForm, PaymentForm, ChangePinForm, BalanceInquiryForm
 
 @login_required
 def home(request):
@@ -37,8 +37,8 @@ def transfer(request):
         if form.is_valid():
             recipientIBAN = form.cleaned_data['recipientIBAN']
             amount = form.cleaned_data['amount']
-            sender_account = Account.objects.get(owner=request.user)
-            recipient_account = Account.objects.get(account_number=recipientIBAN)
+            sender_account = BankAccount.objects.get(owner=request.user)
+            recipient_account = BankAccount.objects.get(account_number=recipientIBAN)
             if sender_account.balance >= amount:
                 sender_account.balance -= amount
                 sender_account.save()
@@ -59,7 +59,7 @@ def withdrawal(request):
         form = WithdrawalForm(request.POST)
         if form.is_valid():
             amount = form.cleaned_data['amount']
-            account = Account.objects.get(owner=request.user)
+            account = BankAccount.objects.get(owner=request.user)
             if account.balance >= amount:
                 account.balance -= amount
                 account.save()
@@ -72,45 +72,54 @@ def withdrawal(request):
         form = WithdrawalForm()
     return render(request, 'withdrawal.html', {'form': form})
 
-@login_required
-def bill_payment(request):
+@login_required ########
+def make_payment(request):
     if request.method == 'POST':
-        form = BillPaymentForm(request.POST)
+        form = PaymentForm(request.POST)
         if form.is_valid():
-            payee_name = form.cleaned_data['payee']
+            entity = form.cleaned_data['entity']
+            reference = form.cleaned_data['reference']
             amount = form.cleaned_data['amount']
-            due_date = form.cleaned_data['due_date']
-            try:
-                payee_account = ServiceProviderAccount.objects.get(name=payee_name)
-                account = Account.objects.get(owner=request.user)
-                if account.balance >= amount:
-                    account.balance -= amount
-                    account.save()
-                    Bill.objects.create(payee=payee_account, amount=amount, due_date=due_date)
-                    Transaction.objects.create(user=request.user, account=account, transaction_type=TransactionType.objects.get(name='Bill Payment'), amount=amount, recipientIBAN=payee_account.account_number)
-                    Receipt.objects.create(user=request.user, content=f"Paid ${amount} to {payee_name} (Bill Payment)", transaction=Transaction.objects.filter(user=request.user).last())
-                    return redirect('success_page')
-                else:
-                    return render(request, 'error_page.html', {'error_message': 'Insufficient funds'})
-            except ServiceProviderAccount.DoesNotExist:
-                return render(request, 'error_page.html', {'error_message': 'Invalid payee name'})
+
+            bank_account = BankAccount.objects.get(user=request.user)  
+
+            if bank_account.balance >= amount:
+                payment = Payment(entity=entity, reference=reference, amount=amount, transaction_id=None)
+                payment.save()
+
+                bank_account.balance -= amount
+                bank_account.save()
+
+
+                return redirect('payment_success_view') 
+            else:
+                return render(request, 'error_page.html', {'error_message': 'Insufficient funds'}) #Do the error_page.html?????
+        else:
+            return render(request, 'error_page.html', {'error_message': 'Payment form not valid'}) 
+
     else:
-        form = BillPaymentForm()
-    return render(request, 'bill_payment.html', {'form': form})
+        form = PaymentForm()
+
+    return render(request, 'payment/make_payment.html', {'form': form})
+
 
 @login_required
-def change_pin(request):
+def change_pin(request):######
     if request.method == 'POST':
         form = ChangePinForm(request.POST)
         if form.is_valid():
             current_pin = form.cleaned_data['current_pin']
             new_pin = form.cleaned_data['new_pin']
+            confirm_new_pin = form.cleaned_data['confirm_new_pin']
             user = request.user
             atm_user = ATMUser.objects.get(user=user)
-            if atm_user.pin == current_pin:
-                atm_user.pin = new_pin
-                atm_user.save()
-                return redirect('success_page')
+            if atm_user.pin == current_pin: ####
+                if new_pin == confirm_new_pin:
+                    atm_user.pin = new_pin
+                    atm_user.save()
+                    return redirect('success_page')
+                else:
+                    return render(request, 'error_page.html', {'error_message': 'PIN does not match'})
             else:
                 return render(request, 'error_page.html', {'error_message': 'Current PIN is incorrect'})
     else:
@@ -119,7 +128,7 @@ def change_pin(request):
 
 @login_required
 def balance_inquiry(request):
-    account = Account.objects.get(owner=request.user)
+    account = BankAccount.objects.get(owner=request.user)
     return render(request, 'balance_inquiry.html', {'balance': account.balance})
 
 @login_required
