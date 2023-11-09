@@ -1,0 +1,18 @@
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block title %}Recuperação de PIN por Email - ATM SYSTEM{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Recuperação de PIN por Email</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Enviar Código</button>
+    </form>
+    {% if error_message %}
+        <p class="text-danger">{{ error_message }}</p>
+    {% endif %}
+</div>
+{% endblock %}
