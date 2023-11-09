@@ -118,3 +118,8 @@ def transaction_history(request):
 @login_required
 def success_page(request):
     return render(request, 'success_page.html')
+
+@login_required
+def error_page(request):
+    error_message = "Ocorreu um erro inesperado."
+    return render(request, 'error_page.html', {'error_message': error_message})
