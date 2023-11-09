@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from .models import Account, Transaction, Receipt, ATMUser, TransactionType, ATM, Bill, ServiceProviderAccount
-from .forms import DepositForm, TransferForm, WithdrawalForm, BillPaymentForm, ChangePinForm, BalanceInquiryForm
+from .forms import DepositForm, TransferForm, WithdrawalForm, BillPaymentForm, ChangePinForm
 
 @login_required
 def home(request):
