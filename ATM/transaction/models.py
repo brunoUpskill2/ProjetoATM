@@ -38,18 +38,13 @@ class Withdrawal(models.Model):
     def generateReceipt():
         pass
 
-class Payment(models.Model):
+class Payment(models.Model): #######
     payment_id = models.IntegerField(primary_key=True,max_length=250)
     transaction_id = models.ForeignKey(Transaction,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    amount = models.DecimalField(max_digits=7,decimal_places=2)
-    recipientIBAN = models.CharField(max_length=25)
-    description = models.CharField(max_length=255)
-
-    def processPayment():
-        pass
-    def generateReceipt():
-        pass
+    entity = models.CharField(max_length=5)
+    reference = models.CharField(max_length=9)
+    amount = models.DecimalField(max_digits=15, decimal_places=2)
 
 class Receipt(models.Model):
     receipt_id = models.IntegerField(primary_key=True,max_length=50)
