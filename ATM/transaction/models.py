@@ -1,6 +1,6 @@
 from django.db import models
-from User.models import ATMUser,BankAccount
-from Admin.models import ATMMachine
+from user.models import ATMUser,BankAccount
+from admininstrator.models import ATMMachine
 # Create your models here.
 class TransactionType(models.Model):
     type_id = models.IntegerField(max_length=25)

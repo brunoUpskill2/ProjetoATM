@@ -1,7 +1,7 @@
 from django.contrib import admin
-from Transactions.models import *
-from User.models import *
-from Admin.models import *
+from transaction.models import *
+from user.models import *
+from admininstrator.models import *
 
 # Register your models here.
 #Admin
