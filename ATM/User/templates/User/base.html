@@ -1,19 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}Meu Aplicativo{% endblock %}</title>
+    <title>{% block title %}ATM SYSTEM{% endblock %}</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+          crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="{% url 'login' %}">Login</a></li>
-                <li><a href="{% url 'pin_recovery' %}">Recuperação de PIN</a></li>
-                <li><a href="{% url 'change_pin' %}">Mudança de PIN</a></li>
-                <li><a href="{% url 'create_user' %}">Criar Utilizador</a></li>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{% url 'pagina_inicial' %}">ATM SYSTEM</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'pagina_inicial' %}">Página Inicial <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="submenuUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Utilizador
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="submenuUser">
+                        <a class="dropdown-item" href="{% url 'change_pin' %}">Mudar PIN</a>
+                        <a class="dropdown-item" href="{% url 'create_pin' %}">Criar PIN</a>
+                        <a class="dropdown-item" href="{% url 'pin_recovery_email' %}">Recuperar PIN por Email</a>
+                        <a class="dropdown-item" href="{% url 'pin_recovery_sms' %}">Recuperar PIN por SMS</a>
+                        <!-- Outros submenus relacionados ao utilizador aqui -->
+                    </div>
+                </li>
             </ul>
-        </nav>
-    </header>
+            <div class="form-inline my-2 my-lg-0">
+                <a href="{% url 'login' %}" class="btn btn-warning">Login</a>
+                <!-- Outros elementos comuns aqui -->
+            </div>
+        </div>
+    </nav>
+
     <main>
         {% block content %}{% endblock %}
     </main>
