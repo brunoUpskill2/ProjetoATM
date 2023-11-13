@@ -98,12 +98,10 @@ def make_payment(request):
 
                 bank_account.balance -= amount
                 bank_account.save()
-                Receipt.objects.create(user_id=request.user, content=f"Paid ${amount} to {entity}", 
-                       transaction=Transaction.objects.filter(user=request.user).last(), 
-                       atm_location=ATMMachine.objects.filter(transaction_id=transaction.id))
-
-                
-
+                Receipt.objects.create(content=f"Paid ${amount} to {entity}", 
+                                       transaction_id=Transaction.objects.filter(user=request.user).last(),
+                                       transaction_type = type, user_id=request.user,
+                                       atm_location=ATMMachine.objects.filter(transaction_id=transaction.id))
                 return redirect('payment_success_view') 
             else:
                 return render(request, 'error_page.html', {'error_message': 'Insufficient funds'}) #Do the error_page.html?????
