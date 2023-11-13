@@ -1,0 +1,28 @@
+{% extends "admininstrator/base.html" %}
+{% block content %}
+    <h1> ATM Machine Status </h1>
+    <table>
+    <tr>
+        <th>Status</th>
+        <th>Machine ID</th>
+        <th>Current Balance</th>
+        <th>Min. Balance</th>
+        <th>Location</th>
+       
+    </tr>
+    <tr>
+        <th>{{status}}</th>
+        <th>{{atm_machine_uid}}</th>
+        <th>{{current_balance}}</th>
+        <th>{{mininum_balance}}</th>
+        <th>{{location}}</th>
+       
+    </tr>
+    </table>
+    <div class = 'row'>
+        <div class = 'col'> 
+            <a href = "{% url 'base' %}" class = 'btn btn-primary mt-5'> Back </a>
+        </div> 
+    </div>
+        
+{% endblock content %}

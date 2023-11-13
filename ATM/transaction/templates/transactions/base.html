@@ -36,7 +36,7 @@
                     <a class="nav-link" href="{% url 'transfer' %}">Transferências</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'payment' %}">Pagamentos</a>
+                    <a class="nav-link" href="{% url 'bill_payment' %}">Pagamentos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'balance_inquiry' %}">Consulta de Saldo</a>
@@ -44,13 +44,6 @@
             </ul>
             <div class="form-inline my-2 my-lg-0">
                 <a href="{% url 'login' %}" class="btn btn-warning">Login</a>
-                <a href="{% url 'devolution' %}">
-                    <img id="cart-icon" src="{% static 'images/reorder.png' %}">
-                </a>
-                <a href="{% url 'cart' %}">
-                    <img id="cart-icon" src="{% static 'images/cart.png' %}">
-                </a>
-                <p id="cart-total">0</p>
             </div>
         </div>
     </nav>

@@ -3,19 +3,26 @@ from django.db import models
 # Create your models here.
 
 class HolderType(models.Model):
-    holderType_id = models.IntegerField(max_length=20)
+    holderType_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50)
     #1st Holder 
     #2nd Holder 
     #Mover 
 
 class ATMUser(models.Model):
-    id = models.BigAutoField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=50)
-    IBAN = models.CharField(max_length=25)
-    BAN = models.CharField(max_length=21)
-    NIF = models.CharField(max_length=9)    
+    # IBAN = models.CharField(max_length=25)
+    # BAN = models.CharField(max_length=21)
+    # NIF = models.CharField(max_length=9)    
+    
+    def __str__(self):
+        return self.username
+
+class PIN(models.Model):
+    user = models.ForeignKey(ATMUser, on_delete=models.CASCADE)
+    pin = models.CharField(max_length=6)  # Campo para o PIN
 
 class BankAccount(models.Model):
     account_id = models.AutoField(primary_key=True)

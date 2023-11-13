@@ -1,0 +1,15 @@
+{% extends 'user/base.html' %}
+{% load static %}
+
+{% block title %}Alteração de PIN - ATM SYSTEM{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Alteração de PIN</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Alterar PIN</button>
+    </form>
+</div>
+{% endblock %}

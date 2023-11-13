@@ -9,8 +9,9 @@ class Admin(models.Model):
     managed_machines = models.ManyToManyField('ATMMachine')
 
 class ATMMachine(models.Model):
-    STATUS_CHOICES = ("active","Active",
-                      "deactivated","Deactivated")
+    STATUS_CHOICES = (
+    ("active", "Active"),
+    ("deactivated", "Deactivated"))
     
     atm_machine_uid = models.CharField(
         primary_key=True,max_length=16,unique=True
@@ -20,7 +21,7 @@ class ATMMachine(models.Model):
     
     location = models.CharField(max_length=100)
     
-    mininum_balance = models.BigIntegerField()
+    minimum_balance = models.BigIntegerField()
 
     status = models.CharField(
         max_length=15,
