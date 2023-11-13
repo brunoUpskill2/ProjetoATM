@@ -1,0 +1,13 @@
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block title %}Generate Token{% endblock %}
+
+{% block content %}
+    <h2>Generate Token</h2>
+    <form method="post" action="{% url 'User:login' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Generate Token">
+    </form>
+{% endblock %}

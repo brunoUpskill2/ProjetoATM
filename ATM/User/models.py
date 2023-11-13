@@ -1,28 +1,89 @@
 from django.db import models
+import random
+import datetime
+from django.conf import settings
+from django.core.validators import RegexValidator
+from django.contrib.auth import get_user_model
+from django.utils import timezone
 
-class HolderType(models.Model):
-    holderType_id = models.IntegerField(max_length=20)
-    name = models.CharField(max_length=50)
+User = get_user_model()
 
-class ATMUser(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    username = models.CharField(max_length=255)
-    password = models.CharField(max_length=50)  # Campo para senha
+class UserManager(models.Manager):
+    def create_user(self, phone, password=None):
+        if not phone:
+            raise ValueError('User must have a phone number')
+        user = self.model(phone=phone)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, phone, password=None):
+        user = self.create_user(
+            phone=phone,
+            password=password,
+        )
+        user.is_admin = True
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
+
+class User(models.AbstractUser):
+    username = models.CharField(max_length=150, blank=True)
+    email = models.EmailField(
+        verbose_name='email field',
+        max_length=60,
+        unique=True,
+        null=True, blank=True,
+    )
+    phone_regex = RegexValidator(
+        regex=r'09(\d{9})$',
+        message='Enter a valid mobile number. This value may contain only numbers.',
+    )
+    phone = models.CharField(
+        verbose_name='phone field',
+        max_length=11,
+        unique=True,
+        validators=[phone_regex],
+    )
+
+    objects = UserManager()
+    USERNAME_FIELD = 'phone'
+    REQUIRED_FIELDS = []
+
+class PhoneToken(models.Model):
+    phone_regex = RegexValidator(
+        regex=r'09(\d{9})$',
+        message='Enter a valid mobile number. This value may contain only numbers.',
+    )
+    phone_number = models.CharField(
+        max_length=11,
+        validators=[phone_regex],
+    )
+    otp = models.IntegerField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True, editable=False)
+
+    def validate_otp(self):
+        valid_otp_duration = getattr(settings, 'DURATION_OF_OTP_VALIDITY', 5)
+        if self.otp is None or timezone.now() > self.timestamp + datetime.timedelta(minutes=valid_otp_duration):
+            return True
+        return False
+
+    @classmethod
+    def send_otp(cls, obj):
+        if obj.validate_otp():
+            obj.otp = cls.generate_otp()
+            obj.save()
+            print(obj.otp)
+            return obj.otp
+
+    @classmethod
+    def generate_otp(cls):
+        number = '0123456789'
+        length = 5
+        key = "".join(random.sample(number, length))
+        return int(key)
 
     def __str__(self):
-        return self.username
-
-class PIN(models.Model):
-    user = models.ForeignKey(ATMUser, on_delete=models.CASCADE)
-    pin = models.CharField(max_length=6)  # Campo para o PIN
-
-class BankAccount(models.Model):
-    account_id = models.AutoField(primary_key=True)
-    holders = models.ManyToManyField(ATMUser, through='Holder')
-    balance = models.FloatField(decimal_places=2)
-    IBAN = models.CharField(max_length=25)
-
-class Holder(models.Model):
-    user = models.ForeignKey(ATMUser, on_delete=models.CASCADE)
-    account = models.ForeignKey(BankAccount, on_delete=models.CASCADE)
-    type = models.ForeignKey(HolderType, on_delete=models.CASCADE)
+        return self.phone_number

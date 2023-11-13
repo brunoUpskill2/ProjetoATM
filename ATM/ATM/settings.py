@@ -1,5 +1,3 @@
-# ATM/settings.py
-
 import os
 from pathlib import Path
 
@@ -35,6 +33,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'User.middleware.IpAddressMiddleware',  # Substitua 'django_phone_login' pelo novo nome da pasta
 ]
 
 ROOT_URLCONF = 'ATM.urls'
@@ -93,31 +92,23 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Configurações de envio de email (configure conforme apropriado)
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'seu_servidor_de_email.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'cadudesporto@hotmail.com'  # Substitua pelo seu endereço de e-mail
-EMAIL_HOST_PASSWORD = '1234'  # Substitua pela sua senha do Hotmail
+INSTALLED_APPS += [
+    'User',
+]
 
-# Configuração para envio de confirmação de email
-DEFAULT_FROM_EMAIL = 'cadudesporto@hotmail.com'  # Substitua pelo seu endereço de e-mail
-EMAIL_CONFIRMATION_DAYS = 1
-EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
-EMAIL_CONFIRMATION_COOLDOWN = 1800  # Meio dia em segundos
-EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/login/'
-EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/login/'
+AUTHENTICATION_BACKENDS = [
+    'User.backend.phone_backend.PhoneBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
-# Configuração de envio de SMS para o número fornecido
-OTP_SMS_SENDER = '967131785'  # Substitua pelo número do qual você enviará o SMS
-OTP_SMS_RECIPIENT_COUNTRY_CODE = '351'  # Substitua pelo código do seu país (Portugal)
-OTP_SMS_RECIPIENT = '967131785'  # Substitua pelo seu número de telefone
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
 
-# Configurações de Twilio (exemplo)
-TWILIO_ACCOUNT_SID = 'seu_sid'
-TWILIO_AUTH_TOKEN = 'seu_token'
-TWILIO_PHONE_NUMBER = 'seu_numero_twilio'
+AUTH_USER_MODEL = 'User.User'
 
-# ... (outras configurações)
-
+EXPIRE_CACHE = 20
+DURATION_OF_OTP_VALIDITY = 2
+PHONE_LOGIN_ATTEMPTS = 10
