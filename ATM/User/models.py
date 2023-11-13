@@ -1,89 +1,63 @@
 from django.db import models
-import random
-import datetime
-from django.conf import settings
-from django.core.validators import RegexValidator
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.utils import timezone
+from django_otp.models import TimeBasedOTP
+from django_otp.oath import TOTP
+from django_otp.util import hex_validator, random_hex
 
-User = get_user_model()
-
-class UserManager(models.Manager):
-    def create_user(self, phone, password=None):
+class UserManager(BaseUserManager):
+    def create_user(self, phone, password=None, **extra_fields):
         if not phone:
-            raise ValueError('User must have a phone number')
-        user = self.model(phone=phone)
+            raise ValueError('The Phone field must be set')
+        user = self.model(phone=phone, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, phone, password=None):
-        user = self.create_user(
-            phone=phone,
-            password=password,
-        )
-        user.is_admin = True
-        user.is_superuser = True
-        user.is_staff = True
-        user.save(using=self._db)
-        return user
+    def create_superuser(self, phone, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(phone, password, **extra_fields)
 
-class User(models.AbstractUser):
-    username = models.CharField(max_length=150, blank=True)
-    email = models.EmailField(
-        verbose_name='email field',
-        max_length=60,
-        unique=True,
-        null=True, blank=True,
-    )
-    phone_regex = RegexValidator(
-        regex=r'09(\d{9})$',
-        message='Enter a valid mobile number. This value may contain only numbers.',
-    )
-    phone = models.CharField(
-        verbose_name='phone field',
-        max_length=11,
-        unique=True,
-        validators=[phone_regex],
-    )
+class User(AbstractBaseUser, TimeBasedOTP):
+    phone = models.CharField(max_length=20, unique=True, validators=[hex_validator], blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
 
     objects = UserManager()
+
     USERNAME_FIELD = 'phone'
-    REQUIRED_FIELDS = []
-
-class PhoneToken(models.Model):
-    phone_regex = RegexValidator(
-        regex=r'09(\d{9})$',
-        message='Enter a valid mobile number. This value may contain only numbers.',
-    )
-    phone_number = models.CharField(
-        max_length=11,
-        validators=[phone_regex],
-    )
-    otp = models.IntegerField(null=True, blank=True)
-    timestamp = models.DateTimeField(auto_now=True)
-    ip_address = models.GenericIPAddressField(null=True, blank=True, editable=False)
-
-    def validate_otp(self):
-        valid_otp_duration = getattr(settings, 'DURATION_OF_OTP_VALIDITY', 5)
-        if self.otp is None or timezone.now() > self.timestamp + datetime.timedelta(minutes=valid_otp_duration):
-            return True
-        return False
-
-    @classmethod
-    def send_otp(cls, obj):
-        if obj.validate_otp():
-            obj.otp = cls.generate_otp()
-            obj.save()
-            print(obj.otp)
-            return obj.otp
-
-    @classmethod
-    def generate_otp(cls):
-        number = '0123456789'
-        length = 5
-        key = "".join(random.sample(number, length))
-        return int(key)
 
     def __str__(self):
-        return self.phone_number
+        return self.phone
+
+    def save(self, *args, **kwargs):
+        # Ensure the phone number is in the correct format
+        self.phone = self.phone.strip().lower()
+        return super().save(*args, **kwargs)
+
+    def get_totp_obj(self):
+        key = random_hex().decode('utf-8')
+        self.totp_key = key
+        return TOTP(key)
+
+    def verify_otp(self, otp):
+        return self.totp_obj().verify(otp)
+
+    def is_verified(self):
+        return self.verified
+
+    def has_perm(self, perm, obj=None):
+        return self.is_staff
+
+    def has_module_perms(self, app_label):
+        return self.is_staff
+
+    @property
+    def is_superuser(self):
+        return self.is_staff
+
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'

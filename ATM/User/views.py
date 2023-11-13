@@ -1,25 +1,16 @@
-from django.shortcuts import redirect, render
-from .models import PhoneToken
-from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
-from django.shortcuts import get_object_or_404
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from django.urls import reverse
 from django.contrib.auth.tokens import default_token_generator
-from .limit_request import GenerateLimitation, check_limitation
-from django.views.generic.edit import FormView
-from django.utils.decorators import method_decorator
-from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
+from django.shortcuts import redirect, render, get_object_or_404
+from django.urls import reverse
+from django.utils.decorators import method_decorator
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views.generic.edit import FormView
+from django.http import HttpResponse
 from django.contrib.auth import get_user_model
-
-User = get_user_model()
-from .decorators import (
-    password_require,
-    phone_number_require,
-    anonymous_required,
-)
+from django.contrib import messages
+from .decorators import password_require, phone_number_require, anonymous_required
 from .forms import (
     PhoneTokenForm,
     PhoneTokenConfirmForm,
@@ -27,21 +18,19 @@ from .forms import (
     SetPasswordForm,
     ForgetPasswordForm,
 )
+from .limit_request import GenerateLimitation
 
+User = get_user_model()
 
 def invalid_attempts_massage_view(request):
     """
     This function is executed when the number of user attempts to login
-    or enter the code exceeds the allowed limit
+    or enter the code exceeds the allowed limit.
     """
     return render(request, "registration/invalid_attempts.html")
 
 
 class GenerateToken(FormView):
-    """
-    Create or get PhoneToken object and send a SMS OTP
-    """
-
     form_class = PhoneTokenForm
     template_name = "registration/generate_token.html"
     success_url = reverse_lazy("phone_login:confirm_otp")
@@ -84,6 +73,7 @@ class ConfirmToken(FormView):
             backend="django.contrib.auth.backends.ModelBackend",
         )
         del self.request.session["phone_number"]
+        messages.success(self.request, "Successfully logged in.")
         return super().form_valid(form)
 
     @method_decorator(phone_number_require("login", "phone_number"))
@@ -111,6 +101,7 @@ class PasswordLogin(FormView):
             backend="django.contrib.auth.backends.ModelBackend",
         )
         del self.request.session["phone_number"]
+        messages.success(self.request, "Successfully logged in.")
         return super().form_valid(form)
 
     @method_decorator(phone_number_require("login", "phone_number"))
@@ -138,6 +129,7 @@ class ForgetPassword(FormView):
         self.request.session[
             "phone_number_for_password"
         ] = form.phone_token.phone_number
+        messages.success(self.request, "OTP sent successfully.")
         return super().form_valid(form)
 
     @method_decorator(check_limitation)
@@ -153,10 +145,8 @@ class ConfirmPasswordToken(FormView):
     def post(self, request, *args, **kwargs):
         form = self.form_class(request=request, data=request.POST)
         if form.is_valid():
-            print("form is valid")
             return self.form_valid(form)
         else:
-            print("form is not valid")
             return self.form_invalid(form)
 
     def form_valid(self, form):
@@ -165,6 +155,7 @@ class ConfirmPasswordToken(FormView):
         uid = urlsafe_base64_encode(force_bytes(user))
         token = default_token_generator.make_token(user)
         del self.request.session["phone_number_for_password"]
+        messages.success(self.request, "Phone number verified.")
         return redirect(
             reverse(
                 "phone_login:change_password", kwargs={"uidb64": uid, "token": token}
@@ -185,9 +176,8 @@ class ChangePassword(FormView):
 
     def get_user(self, uidb64):
         try:
-            # urlsafe_base64_decode() decodes to bytestring
-            uid = urlsafe_base64_decode(uidb64).decode()
-            user = User._default_manager.get(phone=uid)
+            uid = force_text(urlsafe_base64_decode(uidb64))
+            user = User._default_manager.get(pk=uid)
         except (
             TypeError,
             ValueError,
@@ -204,6 +194,7 @@ class ChangePassword(FormView):
             user, self.kwargs.get("token")
         ):
             return super().get(request, *args, **kwargs)
+        messages.error(self.request, "Invalid link.")
         return HttpResponse("Invalid Link")
 
     def post(self, request, *args, **kwargs):
@@ -223,4 +214,5 @@ class ChangePassword(FormView):
             login(
                 self.request, user, backend="django.contrib.auth.backends.ModelBackend"
             )
+        messages.success(self.request, "Password changed successfully.")
         return super().form_valid(form)

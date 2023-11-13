@@ -1,42 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ATM SYSTEM{% endblock %}</title>
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
           integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
           crossorigin="anonymous">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{% url 'pagina_inicial' %}">ATM SYSTEM</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" href="{% url 'User:pagina_inicial' %}">ATM SYSTEM</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-    
+
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'pagina_inicial' %}">Página Inicial <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="{% url 'User:pagina_inicial' %}">Página Inicial <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="submenuUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Utilizador
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="submenuUser">
-                        <a class="dropdown-item" href="{% url 'change_pin' %}">Mudar PIN</a>
-                        <a class="dropdown-item" href="{% url 'create_pin' %}">Criar PIN</a>
-                        <a class="dropdown-item" href="{% url 'pin_recovery_email' %}">Recuperar PIN por Email</a>
-                        <a class="dropdown-item" href="{% url 'pin_recovery_sms' %}">Recuperar PIN por SMS</a>
-                        <!-- Outros submenus relacionados ao utilizador aqui -->
-                    </div>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'User:change_pin' %}">Mudar PIN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'User:create_pin' %}">Criar PIN</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'User:pin_recovery_email' %}">Recuperar PIN por Email</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'User:pin_recovery_sms' %}">Recuperar PIN por SMS</a>
                 </li>
             </ul>
             <div class="form-inline my-2 my-lg-0">
-                <a href="{% url 'login' %}" class="btn btn-warning">Login</a>
-                <!-- Outros elementos comuns aqui -->
+                <a href="{% url 'User:password_login' %}" class="btn btn-warning">Login</a>
             </div>
         </div>
     </nav>
@@ -44,5 +45,15 @@
     <main>
         {% block content %}{% endblock %}
     </main>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+            integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+            integrity="sha384-cs/6+pBfD5Ic6K5s6fZ3pzaO5A5C0H1G5BRPW58G37iq9BSuMbrHXD6L/FpPQ",
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+            integrity="sha384-wfSDF2E50YzL0R9Q6TajlNBpH9TwCDKtLKTuNRG9PJZAxh4khp5Fi9hjmaI5LlNQ"
+            crossorigin="anonymous"></script>
 </body>
 </html>

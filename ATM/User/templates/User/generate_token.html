@@ -1,13 +1,12 @@
 {% extends 'User/base.html' %}
-{% load static %}
-
-{% block title %}Generate Token{% endblock %}
 
 {% block content %}
-    <h2>Generate Token</h2>
-    <form method="post" action="{% url 'User:login' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Generate Token">
-    </form>
+  <h2>Generate Token</h2>
+  <p>Um token foi gerado e enviado para o seu número de telefone. Por favor, confirme abaixo:</p>
+  <form method="post" action="{% url 'User:confirm_otp' %}">
+    {% csrf_token %}
+    <label for="otp">OTP:</label>
+    <input type="text" name="otp" required>
+    <button type="submit">Confirmar</button>
+  </form>
 {% endblock %}
