@@ -15,9 +15,8 @@ class Transaction(models.Model):
     transaction_id = models.AutoField(primary_key=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     amount = models.DecimalField(max_digits=7,decimal_places=2)
-    
     type = models.ForeignKey(TransactionType,on_delete=models.CASCADE)
-    recipientIBAN = models.CharField(max_length=25)
+    recipientIBAN = models.CharField(max_length=25,null=True)
     
 
 class Deposit(models.Model):

@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from .models import BankAccount, Transaction, Receipt, ATMUser, TransactionType, Payment
 from .forms import DepositForm, TransferForm, WithdrawalForm, PaymentForm, ChangePinForm, BalanceInquiryForm
+from admininstrator.models import ATMMachine
 
 @login_required
 def home(request):
@@ -80,16 +81,28 @@ def make_payment(request):
             entity = form.cleaned_data['entity']
             reference = form.cleaned_data['reference']
             amount = form.cleaned_data['amount']
-
+            type = form.cleaned_data['type']#adicionar ao html
+            
             bank_account = BankAccount.objects.get(user=request.user)  
 
             if bank_account.balance >= amount:
-                payment = Payment(entity=entity, reference=reference, amount=amount, transaction_id=None)
+                transaction = Transaction.objects.get_or_create(amount = amount,
+                                                                type = type)
+                latest_trans = Transaction.objects.filter().latest()
+                
+                payment = Payment(entity=entity, reference=reference,
+                                   amount=amount, 
+                                   transaction_id = latest_trans.objects.order_by('transaction_id')[0])
                 payment.save()
+
 
                 bank_account.balance -= amount
                 bank_account.save()
+                Receipt.objects.create(user_id=request.user, content=f"Paid ${amount} to {entity}", 
+                       transaction=Transaction.objects.filter(user=request.user).last(), 
+                       atm_location=ATMMachine.objects.filter(transaction_id=transaction.id))
 
+                
 
                 return redirect('payment_success_view') 
             else:
