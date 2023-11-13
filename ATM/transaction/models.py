@@ -44,9 +44,8 @@ class Receipt(models.Model):
     transaction_type = models.ForeignKey(TransactionType, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(ATMUser,on_delete=models.CASCADE)
-    atm_location = models.ForeignKey(ATMMachine, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=15, decimal_places=2,default=0.00)
     
     def __str__(self):
-        return f"{self.receipt_id},{self.content},{self.transaction_id},{self.timestamp},{self.user_id},{self.atm_location}"
+        return f"{self.receipt_id},{self.content},{self.transaction},{self.timestamp},{self.user},{self.amount}"
     
