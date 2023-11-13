@@ -1,5 +1,5 @@
 from django.db import models
-from .models import ATMUser,ATM,BankAccount
+from .models import ATMUser,ATM,BankAccount,ATMMachine
 
 # Create your models here.
 class TransactionType(models.Model):
@@ -56,7 +56,7 @@ class Receipt(models.Model):
     transaction_type = models.ForeignKey(TransactionType,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     user_id = models.ForeignKey(ATMUser,on_delete=models.CASCADE)
-    atm_location = models.ForeignKey(ATM,on_delete=models.CASCADE)
+    atm_location = models.ForeignKey(ATMMachine,on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.receipt_id},

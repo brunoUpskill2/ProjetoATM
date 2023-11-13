@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from .models import BankAccount, Transaction, Receipt, ATMUser, TransactionType, Payment
+from .models import BankAccount, Transaction, Receipt, ATMUser, TransactionType, Payment, ATMMachine
 from .forms import DepositForm, TransferForm, WithdrawalForm, PaymentForm, ChangePinForm, BalanceInquiryForm
 
 @login_required
@@ -86,6 +86,8 @@ def make_payment(request):
             if bank_account.balance >= amount:
                 payment = Payment(entity=entity, reference=reference, amount=amount, transaction_id=None)
                 payment.save()
+
+                Receipt.objects.create(user_id=request.user, content=f"Paid ${amount} to {entity}", transaction=Transaction.objects.filter(user=request.user).last(), atm_location=ATMMachine.objects.get(location="some location"))
 
                 bank_account.balance -= amount
                 bank_account.save()
