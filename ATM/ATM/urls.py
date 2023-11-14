@@ -20,6 +20,9 @@ from django.urls import path,include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('Transactions/', include('Transactions.urls')),  # Inclua as URLs do aplicativo "Transactions"
+    path('User/', include('User.urls')),  # Inclua as URLs do aplicativo de autenticação de usuário
+    # Outras URLs do seu projeto
     path('',include('admininstrator.urls')),
     path('',include('transaction.urls')),
     path('',include('user.urls')),

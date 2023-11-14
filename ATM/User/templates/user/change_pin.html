@@ -1,15 +1,9 @@
-{% extends 'user/base.html' %}
-{% load static %}
+<!-- templates/User/change_pin.html -->
+{% extends 'User/base.html' %}
 
-{% block title %}Alteração de PIN - ATM SYSTEM{% endblock %}
+{% block title %}Mudar PIN{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Alteração de PIN</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Alterar PIN</button>
-    </form>
-</div>
+    <h1>Mudar PIN para o usuário {{ user.username }}</h1>
+    <!-- Adicione formulário para mudar o PIN e lógica correspondente -->
 {% endblock %}
