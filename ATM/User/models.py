@@ -1,43 +1,19 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser
-
-# Modelo de Usuário Customizado
-class ATMUser(AbstractUser):
-    # Adicione campos personalizados conforme necessário
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
-
-    def __str__(self):
-        return self.username
-
-# Modelo para armazenar PINs dos usuários
-class PIN(models.Model):
-    user = models.OneToOneField(ATMUser, on_delete=models.CASCADE)
-    pin = models.CharField(max_length=4)
-
-    def __str__(self):
-        return f'{self.user.username} - PIN: {self.pin}'
-
-# Modelo para informações da conta bancária
-class BankAccount(models.Model):
-    user = models.OneToOneField(ATMUser, on_delete=models.CASCADE)
-    nib = models.CharField(max_length=15, blank=True, null=True)
-    iban = models.CharField(max_length=34, blank=True, null=True)
-    account_holder_name = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f'{self.account_holder_name} - NIB: {self.nib} - IBAN: {self.iban}'
-
-
-###########################################################################################
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-# Modelo de Usuário Customizado
-class ATMUser(AbstractUser):
-    # Adicione campos personalizados conforme necessário
-    phone = models.CharField(max_length=15, blank=True, null=True)
+from ATM import User
 
+# Modelo de Usuário Customizado
+class ATMUser(models.Model):
+    id = models.AutoField(primary_key=True)
+    username = models.CharField(max_length=255)
+    password = models.CharField(max_length=50)
+    django_user = models.OneToOneField(User,on_delete=models.CASCADE,null=True,blank=True)
+    # IBAN = models.CharField(max_length=25)
+    # BAN = models.CharField(max_length=21)
+    # NIF = models.CharField(max_length=9)    
+   
     def __str__(self):
         return self.username
 
