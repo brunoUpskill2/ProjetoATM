@@ -1,13 +1,11 @@
 {% extends 'transactions/base.html' %}
 {% load static %}
 {% block content %}
-<h1>Make a Deposit</h1>
-    {% csrf_token %}
-    <form  method="post">
-        <label for="amount">Amount </label>
-        <input id="amount" type="number" name="amount" value="{{ amount }}">
-        <button type="">Deposit</button>
+    <h1>Make a Deposit</h1>
+    <form method="post" action="{% url 'deposit' %}">
+        {% csrf_token %}
+        <label for="amount">Amount:</label>
+        <input id="amount" type="number" name="amount" value="{{ amount }}" required>
+        <button type="submit">Deposit</button>
     </form>
-   
- 
 {% endblock %}

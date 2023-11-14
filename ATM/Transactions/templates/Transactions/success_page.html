@@ -3,7 +3,8 @@
 
 {% block content %}
     <h1>Success</h1>
-    <p>Your action was successful!</p>
+    <p>Your transaction was processed successfully.</p>
+    <a href="{% url 'receipt' transaction.transaction_id %}">View Receipt</a>
     
     <div class="row">
         <div class="col">

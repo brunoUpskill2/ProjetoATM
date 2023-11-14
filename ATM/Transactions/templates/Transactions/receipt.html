@@ -1,0 +1,13 @@
+{% extends "Transactions\base.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Transaction Receipt</h2>
+<p><strong>Transaction ID:</strong> {{ transaction.transaction_id }}</p>
+<p><strong>Timestamp:</strong> {{ transaction.timestamp }}</p>
+<p><strong>Amount:</strong> {{ transaction.amount }}</p>
+<p><strong>Transaction Type:</strong> {{ transaction.transaction_type.name }}</p>
+<p><strong>Account:</strong> {{ transaction.account }}</p>
+<p><strong>Content:</strong> {{ transaction.content }}</p>
+{% endblock %}
+

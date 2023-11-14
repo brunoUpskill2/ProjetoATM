@@ -3,21 +3,24 @@
 
 {% block content %}
     <h1>Transaction History</h1>
-    <ul>
-        {% for transaction in transactions %}
-        <li>
-            {{ transaction }}
-        </li>
-        {% endfor %}
-    </ul>
-    
-    <label for="generate_receipt">Generate Receipt:</label>
-    <input type="checkbox" name="generate_receipt" id="generate_receipt">
-    
+    <form method="post" action="{% url 'generate_receipt' %}">
+        {% csrf_token %}
+        <ul>
+            {% for transaction in transactions %}
+                <li>
+                    <input type="checkbox" name="selected_transactions" value="{{ transaction.id }}">
+                    {{ transaction.timestamp }} - {{ transaction.amount }} - {{ transaction.content }}
+                </li>
+            {% endfor %}
+        </ul>
+        
+        <button type="submit" class="btn btn-primary mt-3">Generate Receipt</button>
+    </form>
+
     <div class="row">
         <div class="col">
-            <a href="{% url 'user-home' %}" class="btn btn-primary mt-5">Back</a>
+            <a href="{% url 'user-home' %}" class="btn btn-primary mt-3">Back</a>
         </div>
     </div>
-</div>
 {% endblock %}
+

@@ -4,14 +4,13 @@
 {% block content %}
     <h1>Balance Inquiry</h1>
     <p>Your current account balance is: ${{ balance }}</p>
-    
-    <label for="generate_receipt">Generate Receipt:</label>
-    <input type="checkbox" name="generate_receipt" id="generate_receipt">
-    
+
+    <a href="{% url 'receipt' transaction.transaction_id %}">View Receipt</a>
+
     <div class="row">
         <div class="col">
-            <a href="{% url 'user-home' %}" class="btn btn-primary mt-5">Back</a>
+            <a href="{% url 'home' %}" class="btn btn-primary mt-3">Home</a>
         </div>
     </div>
-</div>
 {% endblock %}
+

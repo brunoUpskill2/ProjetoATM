@@ -29,5 +29,6 @@ urlpatterns = [
     path('transaction_history', views.transaction_history, name='transaction_history'),
     path('transfer', views.transfer, name='transfer'),
     path('withdrawal', views.withdrawal, name='withdrawal'),
-    path('error_page', views.error_page, name='error_page')
+    path('error_page', views.error_page, name='error_page'),
+    path('receipt/<int:transaction_id>/', views.receipt, name='receipt')
 ]

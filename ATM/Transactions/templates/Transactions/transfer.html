@@ -5,9 +5,18 @@
     <h1>Transfer</h1>
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
+        
+        <label for="{{ form.recipientIBAN.id_for_label }}">Recipient IBAN:</label>
+        {{ form.recipientIBAN }}
+        {{ form.recipientIBAN.errors }}
+
+        <label for="{{ form.amount.id_for_label }}">Amount:</label>
+        {{ form.amount }}
+        {{ form.amount.errors }}
 
         <button type="submit" class="btn btn-primary">Transfer</button>
+        
+
     </form>
 
     {% if form.errors %}
@@ -16,12 +25,5 @@
         </div>
     {% endif %}
 
-    {% if request.POST and not form.errors %}
-        <div class="alert alert-success">
-            <strong>Success:</strong> Your transfer was successful!
-        </div>
-        <label for="generate_receipt">Generate Receipt:</label>
-        <input type="checkbox" name="generate_receipt" id="generate_receipt">
-    {% endif %}
-</div>
 {% endblock %}
+

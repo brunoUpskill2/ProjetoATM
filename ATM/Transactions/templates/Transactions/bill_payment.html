@@ -6,7 +6,25 @@
         <h1>Bill Payment</h1>
         <form method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+
+            <div class="mb-3">
+                <label for="{{ form.entity.id_for_label }}">Entity:</label>
+                {{ form.entity }}
+                {{ form.entity.errors }}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.reference.id_for_label }}">Reference:</label>
+                {{ form.reference }}
+                {{ form.reference.errors }}
+            </div>
+
+            <div class="mb-3">
+                <label for="{{ form.amount.id_for_label }}">Amount:</label>
+                {{ form.amount }}
+                {{ form.amount.errors }}
+            </div>
+
             <button type="submit" class="btn btn-primary">Pay Bill</button>
         </form>
 
@@ -25,11 +43,9 @@
             <div class="alert alert-success mt-3">
                 <strong>Success:</strong> Your bill payment was successful!
             </div>
-            <div class="form-check mt-3">
-                <input type="checkbox" class="form-check-input" name="generate_receipt" id="generate_receipt">
-                <label class="form-check-label" for="generate_receipt">Generate Receipt</label>
-            </div>
         {% endif %}
     </div>
 {% endblock %}
+
+
 
