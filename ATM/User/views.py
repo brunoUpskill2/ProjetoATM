@@ -8,19 +8,22 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-
-            # Simulação de autenticação
-            if username == 'exemplo@email.com' and password == 'senha':
-                user = ATMUser.objects.get(username='exemplo@email.com')
-                login(request, user)
-                return redirect('dashboard')
-            else:
-                return render(request, 'login.html', {'form': form, 'error_message': 'Autenticação falhou. Verifique suas credenciais.'})
+            return _extracted_from_login_view_(form, request)
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
+
+
+# TODO Rename this here and in `login_view`
+def _extracted_from_login_view_(form, request):
+    username = form.cleaned_data['username']
+    password = form.cleaned_data['password']
+
+    if username != 'exemplo@email.com' or password != 'senha':
+        return render(request, 'login.html', {'form': form, 'error_message': 'Autenticação falhou. Verifique suas credenciais.'})
+    user = ATMUser.objects.get(username='exemplo@email.com')
+    login(request, user)
+    return redirect('dashboard')
 
 # Visualização de Criação de PIN (Exemplo)
 def create_pin_view(request):
@@ -57,9 +60,5 @@ def change_pin_view(request):
 
 
 
-
-
-
-######################################################################################
 
 

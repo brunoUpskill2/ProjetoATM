@@ -1,11 +1,13 @@
 from django.urls import path
-from .views import login_view, create_pin_view, change_pin_view
+from .views import login_view, create_pin, change_pin
+
+
+
+from . import views
 
 urlpatterns = [
-    path('login/', login_view, name='login'),
-    path('create_pin/', create_pin_view, name='create_pin'),
-    path('change_pin/', change_pin_view, name='change_pin'),
-    # Adicione outras URLs conforme necessário para seu projeto
+    path('login', views.login_view, name='login'),
+    path('user/create_pin/', views.create_pin_view, name='create_pin'),
+    path('user/change_pin/', views.change_pin_view, name='change_pin'),
 ]
-
 

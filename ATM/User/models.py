@@ -1,8 +1,14 @@
-
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-
+from django.contrib.auth.models import User
 from ATM import User
+# Create your models here.
+
+class HolderType(models.Model):
+    holderType_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=50)
+    #1st Holder 
+    #2nd Holder 
+    #Mover 
 
 # Modelo de Usuário Customizado
 class ATMUser(models.Model):
@@ -17,6 +23,18 @@ class ATMUser(models.Model):
     def __str__(self):
         return self.username
 
+    # IBAN = models.CharField(max_length=25)
+    # BAN = models.CharField(max_length=21)
+    # NIF = models.CharField(max_length=9)    
+    
+    def __str__(self):
+        return self.username
+
+class PIN(models.Model):
+    user = models.ForeignKey(ATMUser, on_delete=models.CASCADE)
+    pin = models.CharField(max_length=6)  # Campo para o PIN
+
+
 # Modelo para armazenar PINs dos usuários
 class PIN(models.Model):
     user = models.ForeignKey(ATMUser, on_delete=models.CASCADE)
@@ -27,6 +45,9 @@ class BankAccount(models.Model):
     account_id = models.AutoField(primary_key=True)
     holders = models.ManyToManyField(ATMUser, through='Holder')
     balance = models.DecimalField(max_digits=7, decimal_places=2)
+    holders = models.ManyToManyField(ATMUser,through='Holder')
+    balance = models.DecimalField(max_digits=7,decimal_places=2)
+
     IBAN = models.CharField(max_length=25)
 
 class Holder(models.Model):

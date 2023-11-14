@@ -1,0 +1,27 @@
+{% extends "transactions\base.html" %}
+{% load static %}
+
+{% block content %}
+    <h1>Withdrawal</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit" class="btn btn-primary">Withdraw</button>
+    </form>
+
+    {% if form.errors %}
+        <div class="alert alert-danger">
+            <strong>Error:</strong> {{ form.errors }}
+        </div>
+    {% endif %}
+
+    {% if request.POST and not form.errors %}
+        <div class="alert alert-success">
+            <strong>Success:</strong> Your withdrawal was successful!
+        </div>
+        <label for="generate_receipt">Generate Receipt:</label>
+        <input type="checkbox" name="generate_receipt" id="generate_receipt">
+    {% endif %}
+</div>
+{% endblock %}

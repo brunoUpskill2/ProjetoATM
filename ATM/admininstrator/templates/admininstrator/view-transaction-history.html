@@ -1,0 +1,39 @@
+{% extends "administrator/base.html" %}
+{% block content %}
+    <h1> View Transaction History </h1>
+
+    <form action='/administrator/view-transaction-history' method='POST' class='mt-5'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class='btn btn-primary' type='submit'> Search </button>
+    </form>
+
+    {% if message %}
+        <p class='mt-5'> {{ message }} </p>
+    {% endif %}
+
+    {% if history %}
+        <table class="table my-5">
+            <thead>
+                <tr>
+                    <th scope="col">Transaction Type</th>
+                    <th scope="col"> Amount </th>
+                    <th scope="col"> Timestamp </th>
+                    <th scope="col"> Recipient IBAN </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for transaction in history %}
+                    <tr>
+                        <td> {{ transaction.type.name }}</td>
+                        <td> {{ transaction.amount }}
+                        <td> {{ transaction.timestamp }} </td>
+                        <td> {{ transaction.recipientIBAN }} </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+{% endblock content %}
