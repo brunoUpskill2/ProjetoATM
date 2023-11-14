@@ -28,3 +28,11 @@ class ATMMachine(models.Model):
         choices = STATUS_CHOICES,
         default='active'
     )
+
+    @property
+    def getStatus(self):
+        return self.status
+    
+    @property
+    def status_display(self):
+        return dict(self.STATUS_CHOICES).get(self.status, "")
