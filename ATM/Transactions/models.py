@@ -16,7 +16,7 @@ class Transaction(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     amount = models.FloatField(max_length=25,decimal_places=2)
     type = models.ForeignKey(TransactionType,on_delete=models.CASCADE)
-    recipientIBAN = models.CharField(max_length=25)
+
     
 
 class Deposit(models.Model):
@@ -25,6 +25,13 @@ class Deposit(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     amount = models.FloatField(max_length=25,decimal_places=2)
     account = models.ForeignKey(BankAccount,on_delete=models.CASCADE)
+
+class Transfer(models.Model):
+    transfer_id = models.IntegerField(primary_key=True, max_length=250)
+    transaction_id = models.ForeignKey(Transaction)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    amount = models.FloatField(max_length=25,decimal_places=2)
+    recipient_iban = models.CharField(max_length=23)
 
     
 
@@ -39,7 +46,7 @@ class Withdrawal(models.Model):
     def generateReceipt():
         pass
 
-class Payment(models.Model): #######
+class Payment(models.Model): 
     payment_id = models.IntegerField(primary_key=True,max_length=250)
     transaction_id = models.ForeignKey(Transaction,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
