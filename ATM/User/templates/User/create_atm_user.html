@@ -1,0 +1,19 @@
+<!-- create_atm_user.html -->
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block title %}Create ATM User{% endblock %}
+
+{% block content %}
+    <h2>Create ATM User</h2>
+    <!-- Your content for the create_atm_user view goes here -->
+    <form method="post">
+        <!-- Your form fields go here -->
+        <label for="atm_username">ATM Username:</label>
+        <input type="text" id="atm_username" name="atm_username" required>
+        <label for="atm_password">ATM Password:</label>
+        <input type="password" id="atm_password" name="atm_password" required>
+        <button type="submit">Create User</button>
+    </form>
+    <!-- Other content specific to this view -->
+{% endblock %}

@@ -1,0 +1,17 @@
+<!-- create_pin.html -->
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block title %}Create PIN{% endblock %}
+
+{% block content %}
+    <h2>Create PIN</h2>
+    <!-- Your content for the create_pin view goes here -->
+    <form method="post">
+        <!-- Your form fields go here -->
+        <label for="pin">PIN:</label>
+        <input type="password" id="pin" name="pin" required>
+        <button type="submit">Submit</button>
+    </form>
+    <!-- Other content specific to this view -->
+{% endblock %}

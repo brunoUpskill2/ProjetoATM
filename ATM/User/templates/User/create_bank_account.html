@@ -1,0 +1,22 @@
+<!-- create_bank_account.html -->
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block title %}Create Bank Account{% endblock %}
+
+{% block content %}
+    <h2>Create Bank Account</h2>
+    <!-- Your content for the create_bank_account view goes here -->
+    <form method="post">
+        <!-- Your form fields go here -->
+        <label for="account_number">Account Number:</label>
+        <input type="text" id="account_number" name="account_number" required>
+        <label for="account_type">Account Type:</label>
+        <select id="account_type" name="account_type" required>
+            <option value="savings">Savings</option>
+            <option value="checking">Checking</option>
+        </select>
+        <button type="submit">Create Account</button>
+    </form>
+    <!-- Other content specific to this view -->
+{% endblock %}

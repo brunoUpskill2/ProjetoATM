@@ -1,0 +1,19 @@
+<!-- login.html -->
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <h2>Login</h2>
+    <!-- Your content for the login view goes here -->
+    <form method="post">
+        <!-- Your login form fields go here -->
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Login</button>
+    </form>
+    <!-- Other content specific to this view -->
+{% endblock %}

@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>{% block title %}ATM SYSTEM{% endblock %}</title>
-    <link rel="stylesheet"
-          href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-          crossorigin="anonymous">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, minimum-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <title>{% block title %}ATM SYSTEM{% endblock %}</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -15,34 +13,51 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-    
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'pagina_inicial' %}">Página Inicial <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="submenuUser" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Utilizador
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="submenuUser">
-                        <a class="dropdown-item" href="{% url 'change_pin' %}">Mudar PIN</a>
-                        <a class="dropdown-item" href="{% url 'create_pin' %}">Criar PIN</a>
-                        <a class="dropdown-item" href="{% url 'pin_recovery_email' %}">Recuperar PIN por Email</a>
-                        <a class="dropdown-item" href="{% url 'pin_recovery_sms' %}">Recuperar PIN por SMS</a>
-                        <!-- Outros submenus relacionados ao utilizador aqui -->
-                    </div>
+                {% if user.is_authenticated %}
+                    <!-- Opções de navegação específicas para usuários autenticados -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'deposit' %}">Depósitos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'withdrawal' %}">Levantamentos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'transfer' %}">Transferências</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'payment' %}">Pagamentos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'balance_inquiry' %}">Consulta de Saldo</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'create_atm_user' %}">Criar Usuário ATM</a>
                 </li>
+                <!-- Adicione mais itens de navegação conforme necessário -->
             </ul>
             <div class="form-inline my-2 my-lg-0">
-                <a href="{% url 'login' %}" class="btn btn-warning">Login</a>
-                <!-- Outros elementos comuns aqui -->
+                {% if user.is_authenticated %}
+                    <!-- Adicione elementos específicos para usuários autenticados -->
+                    <span class="navbar-text">
+                        Bem-vindo, {{ user.username }}!
+                    </span>
+                    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-warning">Login</a>
+                {% endif %}
+                <!-- Adicione outros elementos conforme necessário -->
             </div>
         </div>
     </nav>
-
-    <main>
+    <div class="container">
         {% block content %}{% endblock %}
-    </main>
+    </div>
+    <!-- Adicione links para scripts ou outras dependências conforme necessário -->
 </body>
 </html>
