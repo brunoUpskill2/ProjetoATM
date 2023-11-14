@@ -44,10 +44,10 @@ class Payment(models.Model): #######
 
 
 class Transfer(models.Model):
-    transfer_id = models.IntegerField(primary_key=True, max_length=250)
-    transaction_id = models.ForeignKey(Transaction)
+    transfer_id = models.IntegerField(primary_key=True)
+    transaction_id = models.ForeignKey(Transaction,on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    amount = models.FloatField(max_length=25,decimal_places=2)
+    amount = models.DecimalField(max_digits=25,decimal_places=2,default=0.00)
     recipient_iban = models.CharField(max_length=23)
    
 # class Receipt(models.Model):

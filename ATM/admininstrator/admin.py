@@ -13,7 +13,6 @@ admin.site.register(Transaction)
 admin.site.register(Deposit)
 admin.site.register(Withdrawal)
 admin.site.register(Payment)
-admin.site.register(Receipt)
 #User
 admin.site.register(HolderType)
 admin.site.register(Holder)
