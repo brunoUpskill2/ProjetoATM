@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 urlpatterns = [
     path('', views.home, name='home'),
-    path('action/deposit', views.deposit, name='deposit'),
+    path('<int:/deposit', views.deposit, name='deposit'),
     path('action/transfer', views.transfer, name='transfer'),
     path('action/withdrawal', views.withdrawal, name='withdrawal'),
     path('action/make_payment', views.make_payment, name='make_payment'),
