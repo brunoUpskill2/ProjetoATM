@@ -3,7 +3,7 @@
 
 {% block content %}
     <h1>Transaction History</h1>
-    <form method="post" action="{% url 'generate_receipt' %}">
+    <form method="post" action="{% url 'receipt' transaction_id %}">
         {% csrf_token %}
         <ul>
             {% for transaction in transactions %}

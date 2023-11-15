@@ -124,6 +124,7 @@ def receipt(request, transaction_id):
     transaction = get_object_or_404(Transaction, transaction_id=transaction_id)
     return render(request, 'receipt.html', {'transaction': transaction})
 
+
 @login_required
 def balance_inquiry(request):
     account = BankAccount.objects.get(owner=request.user)
