@@ -1,24 +1,14 @@
 from django.shortcuts import render, redirect
-<<<<<<< HEAD
 from django.contrib.auth import login
 from .forms import LoginForm, CreatePinForm, ChangePinForm
 from .models import ATMUser, PIN
 
-=======
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib.auth import login
-from .forms import LoginForm, PinRecoveryForm, CreatePinForm, ChangePinForm
-from .models import ATMUser, PIN
->>>>>>> e94945758e1e6b236ce8cc8395cd3680e858ea9a
+
 # Visualização de Login (Exemplo)
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-<<<<<<< HEAD
-            return _extracted_from_login_view_(form, request)
-=======
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             # Simulação de autenticação
@@ -28,65 +18,11 @@ def login_view(request):
                 return redirect('dashboard')
             else:
                 return render(request, 'login.html', {'form': form, 'error_message': 'Autenticação falhou. Verifique suas credenciais.'})
->>>>>>> e94945758e1e6b236ce8cc8395cd3680e858ea9a
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
 
 
-<<<<<<< HEAD
-# TODO Rename this here and in `login_view`
-def _extracted_from_login_view_(form, request):
-    username = form.cleaned_data['username']
-    password = form.cleaned_data['password']
-
-    if username != 'exemplo@email.com' or password != 'senha':
-        return render(request, 'login.html', {'form': form, 'error_message': 'Autenticação falhou. Verifique suas credenciais.'})
-    user = ATMUser.objects.get(username='exemplo@email.com')
-    login(request, user)
-    return redirect('dashboard')
-=======
-# Visualização de Recuperação de PIN por Email (Exemplo)
-def pin_recovery_email(request):
-    if request.method == 'POST':
-        form = PinRecoveryForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            email = form.cleaned_data['email']
-            user = ATMUser.objects.filter(username=username, email=email).first()
-            if user:
-                # Gere um código de recuperação de exemplo (você pode substituir por uma lógica real)
-                recovery_code = '123456'
-                # Simule o envio do código de recuperação por email
-                subject = 'Código de Recuperação de PIN'
-                message = f'Seu código de recuperação é: {recovery_code}'
-                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
-                return redirect('recovery_confirmation')
-            else:
-                return render(request, 'pin_recovery_email.html', {'form': form, 'error_message': 'Nenhuma correspondência encontrada.'})
-    else:
-        form = PinRecoveryForm()
-    return render(request, 'pin_recovery_email.html', {'form': form})
-# Visualização de Recuperação de PIN por SMS (Exemplo)
-def pin_recovery_sms(request):
-    if request.method == 'POST':
-        form = PinRecoveryForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            phone_number = form.cleaned_data['phone_number']
-            user = ATMUser.objects.filter(username=username, phone_number=phone_number).first()
-            if user:
-                # Gere um código de recuperação de exemplo (você pode substituir por uma lógica real)
-                recovery_code = '123456'
-                # Simule o envio do código de recuperação por SMS (substitua por lógica real)
-                # Você pode usar serviços de SMS, como Twilio, para enviar o código.
-                return redirect('recovery_confirmation')
-            else:
-                return render(request, 'pin_recovery_sms.html', {'form': form, 'error_message': 'Nenhuma correspondência encontrada.'})
-    else:
-        form = PinRecoveryForm()
-    return render(request, 'pin_recovery_sms.html', {'form': form})
->>>>>>> e94945758e1e6b236ce8cc8395cd3680e858ea9a
 
 # Visualização de Criação de PIN (Exemplo)
 def create_pin_view(request):
