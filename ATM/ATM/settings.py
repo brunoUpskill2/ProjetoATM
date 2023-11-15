@@ -16,11 +16,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'admininstrator.apps.AdmininstratorConfig',
     'transactions.apps.TransactionConfig',
     'user.apps.UserConfig',
+    'User.middleware.IpAddressMiddleware',
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
