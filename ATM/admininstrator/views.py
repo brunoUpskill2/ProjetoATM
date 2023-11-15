@@ -3,10 +3,7 @@ from .forms import AdminLoginForm,TransactionSearchForm
 from transaction.models import Transaction
 from django.http import HttpResponse
 from admininstrator.models import Admin
-from ATM.services import getAdmin, setContextMessage, renderPage
 from .models import ATMMachine
-from django.contrib.auth import logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 
 # Create your views here.

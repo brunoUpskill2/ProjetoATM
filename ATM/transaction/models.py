@@ -13,10 +13,7 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=7, decimal_places=2,default=0.00)
     transaction_types = models.ManyToManyField(TransactionType)
     account = models.ForeignKey(BankAccount, on_delete=models.CASCADE,default=0)
-    content = models.CharField(max_length=500)
-    
-        
-    
+    content = models.CharField(max_length=500,default="")
     
    
 class Deposit(models.Model):
@@ -41,7 +38,6 @@ class Payment(models.Model): #######
     entity = models.CharField(max_length=5)
     reference = models.CharField(max_length=9)
     amount = models.DecimalField(max_digits=15, decimal_places=2,default=0.00)
-
 
 class Transfer(models.Model):
     transfer_id = models.IntegerField(primary_key=True)

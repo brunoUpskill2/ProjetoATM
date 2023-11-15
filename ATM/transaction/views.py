@@ -1,45 +1,43 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from .models import BankAccount, Transaction, ATMUser, TransactionType, Payment,Deposit,Transfer
-from .forms import DepositForm, TransferForm, WithdrawalForm, PaymentForm, ChangePinForm, BalanceInquiryForm
-from admininstrator.models import ATMMachine
-
+from .models import BankAccount, Transaction, TransactionType, Payment,  Withdrawal, Deposit, Transfer
+from .forms import DepositForm, TransferForm, WithdrawalForm, PaymentForm
+from user.models import ATMUser
 @login_required
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'transactions/home.html')
 
 @login_required
 def deposit(request):
     if request.method == 'POST':
-        form = DepositForm(request.POST)
+        form = DepositForm(request.POST or None)
         if form.is_valid():
-            user = request.user
             amount = form.cleaned_data['amount']
             type = form.cleaned_data['type']
             bank_account = BankAccount.objects.get(user=request.user)
             bank_account.balance += amount
             bank_account.save()
 
-            transaction = Transaction.objects.get_or_create(amount = amount,
-                                                                type = type)
-            latest_trans = Transaction.objects.filter().latest()
-
+            Transaction.objects.get_or_create(amount = amount,
+                                              account = bank_account,
+                                              content = f'Deposited {amount} in account IBAN {bank_account}'
+                                              )
+                                                            
             deposit = Deposit(amount=amount, account=BankAccount.objects.get(user=request.user),
-                              transaction_id = latest_trans.objects.order_by('transaction_id')[0])
+                              transaction_id = Transaction.objects.latest())
             
             deposit.save()
-
         
             return redirect('success_page')
     else:
         form = DepositForm()
-    return render(request, 'deposit.html', {'form': form})
+    return render(request, 'transactions/deposit.html', {'form': form})
 
 @login_required
 def transfer(request):
     if request.method == 'POST':
-        form = TransferForm(request.POST)
+        form = TransferForm(request.POST or None)
         if form.is_valid():
             recipientIBAN = form.cleaned_data['recipientIBAN']
             amount = form.cleaned_data['amount']
@@ -52,112 +50,104 @@ def transfer(request):
                 recipient_account.balance += amount
                 recipient_account.save()
                 Transaction.objects.get_or_create(amount = amount,
-                                                                type = type)
-                latest_trans = Transaction.objects.filter().latest()
+                                                  account = sender_account,
+                                                  content = f'Transfered {amount} from {sender_account} to {recipient_account}')
 
                 transfer = Transfer(amount=amount, recipient_iban=recipientIBAN ,
-                              transaction_id = latest_trans.objects.order_by('transaction_id')[0])
-            
+                              transaction_id = Transaction.objects.latest())            
                 transfer.save()
-                Receipt.objects.create(content=f"Trasfer ${amount} to account {recipientIBAN}", 
-                                       transaction_id=Transaction.objects.filter(user=request.user).last(),
-                                       transaction_type = type, user_id=request.user)
                 return redirect('success_page')
-        else:
-                return render(request, 'error_page.html', {'error_message': 'Insufficient funds'})
+            else:
+                return render(request, 'transactions/error_page.html', {'error_message': 'Insufficient funds'})
     else:
         form = TransferForm()
-    return render(request, 'transfer.html', {'form': form})
-
-
+    return render(request, 'transactions/transfer.html', {'form': form})
 
 @login_required
 def withdrawal(request):
     if request.method == 'POST':
-        form = WithdrawalForm(request.POST)
+        form = WithdrawalForm(request.POST or None)
         if form.is_valid():
             amount = form.cleaned_data['amount']
             account = BankAccount.objects.get(owner=request.user)
+            type = form.cleaned_data['type']
             if account.balance >= amount:
                 account.balance -= amount
                 account.save()
-                Transaction.objects.create(user=request.user, account=account, transaction_type=TransactionType.objects.get(name='Withdrawal'), amount=amount)
-                Receipt.objects.create(user=request.user, content=f"Withdrew ${amount}", transaction=Transaction.objects.filter(user=request.user).last())
-                return redirect('success_page')
+                Transaction.objects.get_or_create(amount = amount,
+                                                account = account,
+                                                content = f'Withdraw {amount} from {account}')
+                
+                withdrawal = Withdrawal(amount=amount,
+                                   transaction_id = Transaction.objects.latest())
+                withdrawal.save()
+
+                return redirect('transactions/success_page')
             else:
-                return render(request, 'error_page.html', {'error_message': 'Insufficient funds'})
+                return render(request, 'transactions/error_page.html', {'error_message': 'Insufficient funds'})
     else:
         form = WithdrawalForm()
-    return render(request, 'withdrawal.html', {'form': form})
+    return render(request, 'transactions/withdrawal.html', {'form': form})
 
-@login_required ########
+@login_required 
 def make_payment(request):
     if request.method == 'POST':
-        form = PaymentForm(request.POST)
+        form = PaymentForm(request.POST or None)    
         if form.is_valid():
             entity = form.cleaned_data['entity']
             reference = form.cleaned_data['reference']
             amount = form.cleaned_data['amount']
-            type = form.cleaned_data['type']#adicionar ao html
+            type = form.cleaned_data['type']
             
             bank_account = BankAccount.objects.get(user=request.user)  
 
             if bank_account.balance >= amount:
-                transaction = Transaction.objects.get_or_create(amount = amount,
-                                                                type = type)
-                latest_trans = Transaction.objects.filter().latest()
+                Transaction.objects.get_or_create(amount = amount,
+                                                  account = bank_account,
+                                                  content = f'Paid {amount} to entity {entity}')
                 
                 payment = Payment(entity=entity, reference=reference,
                                    amount=amount, 
-                                   transaction_id = latest_trans.objects.order_by('transaction_id')[0])
+                                   transaction_id = Transaction.objects.latest())
                 payment.save()
-
 
                 bank_account.balance -= amount
                 bank_account.save()
-                Receipt.objects.create(content=f"Paid ${amount} to {entity}", 
-                                       transaction_id=Transaction.objects.filter(user=request.user).last(),
-                                       transaction_type = type, user_id=request.user)
-                
-                return redirect('payment_success_view') 
+                return redirect('transactions/success_page') 
             else:
-                return render(request, 'error_page.html', {'error_message': 'Insufficient funds'}) #Do the error_page.html?????
+                return render(request, 'transactions/error_page.html', {'error_message': 'Insufficient funds'}) 
         else:
-            return render(request, 'error_page.html', {'error_message': 'Payment form not valid'}) 
+            return render(request, 'transactions/error_page.html', {'error_message': 'Payment form not valid'})
+    else:
+        form = PaymentForm() 
+    return render(request, 'transactions/bill_payment.html', {'form':form})
 
 @login_required
-def change_pin(request):######
-    if request.method == 'POST':
-        form = ChangePinForm(request.POST)
-        if form.is_valid():
-            current_pin = form.cleaned_data['current_pin']
-            new_pin = form.cleaned_data['new_pin']
-            confirm_new_pin = form.cleaned_data['confirm_new_pin']
-            user = request.user
-            atm_user = ATMUser.objects.get(user=user)
-            if atm_user.pin == current_pin: ####
-                if new_pin == confirm_new_pin:
-                    atm_user.pin = new_pin
-                    atm_user.save()
-                    return redirect('success_page')
-                else:
-                    return render(request, 'error_page.html', {'error_message': 'PIN does not match'})
-            else:
-                return render(request, 'error_page.html', {'error_message': 'Current PIN is incorrect'})
-    else:
-        form = ChangePinForm()
-    return render(request, 'change_pin.html', {'form': form})
+def receipt(request, transaction_id):
+    transaction = get_object_or_404(Transaction, transaction_id=transaction_id)
+    return render(request, 'transactions/receipt.html', {'transaction': transaction})
+
 
 @login_required
 def balance_inquiry(request):
-    account = BankAccount.objects.get(owner=request.user)
-    return render(request, 'balance_inquiry.html', {'balance': account.balance})
+    holder = ATMUser.objects.get(django_user = request.user)
+    account = BankAccount.objects.get(holders=holder)
+    context = {'balance': account.balance}
+    return render(request, 'transactions/balance_inquiry.html', context)
 
 @login_required
 def transaction_history(request):
-    transactions = Transaction.objects.filter(user=request.user)
-    return render(request, 'transaction_history.html', {'transactions': transactions})
+    holder = ATMUser.objects.get(django_user = request.user)
+    bank_account = BankAccount.objects.get(holders=holder)
+    transactions = Transaction.objects.filter(account=bank_account)
+
+    return render(request, 'transactions/transaction_history.html', {'transactions': transactions})
+
 
 @login_required
 def success_page(request):
-    return render(request, 'success_page.html')
+    return render(request, 'transactions/success_page.html')
+
+@login_required
+def error_page(request):
+    return render(request, 'transactions/error_page.html')
