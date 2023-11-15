@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+<<<<<<< HEAD
 from ATM import User
+=======
+
+>>>>>>> e94945758e1e6b236ce8cc8395cd3680e858ea9a
 # Create your models here.
 
 class HolderType(models.Model):
@@ -16,6 +20,7 @@ class ATMUser(models.Model):
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=50)
     django_user = models.OneToOneField(User,on_delete=models.CASCADE,null=True,blank=True)
+<<<<<<< HEAD
     # IBAN = models.CharField(max_length=25)
     # BAN = models.CharField(max_length=21)
     # NIF = models.CharField(max_length=9)    
@@ -23,6 +28,8 @@ class ATMUser(models.Model):
     def __str__(self):
         return self.username
 
+=======
+>>>>>>> e94945758e1e6b236ce8cc8395cd3680e858ea9a
     # IBAN = models.CharField(max_length=25)
     # BAN = models.CharField(max_length=21)
     # NIF = models.CharField(max_length=9)    

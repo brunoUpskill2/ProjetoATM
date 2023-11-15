@@ -13,58 +13,15 @@ from django.contrib.admin.views.decorators import staff_member_required
 def home(request):
     return render(request,'admininstrator/base.html')
 
-def adminLogin(request):
-    renderData = {
-        'request': request,
-        'path': 'administrator/admin-login.html',
-        'context': { 
-            'form': AdminLoginForm(),
-            'message': '',
-        } 
-    } 
-    if request.method == 'POST': 
-        form = AdminLoginForm(request.POST)
-        if form.is_valid():
-            admin = getAdmin(form.cleaned_data['username'])
-            if not admin: 
-                setContextMessage(renderData['context'], 'Not a valid administrator')
-                return renderPage(renderData)
-            
-            if admin.password != form.cleaned_data['password']: 
-                setContextMessage(renderData['context'], 'Incorrect password')
-                return renderPage(renderData)
-            
-            request.session['admin-token'] = admin.username
-            return redirect('/administrator')
-        else: 
-            setContextMessage(renderData['context'], 'Form not valid')
-            return renderPage(renderData)
-    else:
-        admin = Admin(
-            username = 'admin', 
-            password = 'admin'
-        )
-        admin.save()
-        return renderPage(renderData)
-
-@login_required
-def adminLogout(request):
-    logout(request)
-    return redirect('admin-login')
 
 @staff_member_required
 def atmMachineStatus(request):
-    atm_machine = ATMMachine.objects.get(atm_machine_uid = request.session['machine'])
+    atm_machine = ATMMachine.objects.all()
 
-    context = {
-        'status': atm_machine.status,
-        'atm_machine_uid': atm_machine.atm_machine_uid,
-        'current_balance': atm_machine.current_balance,
-        'mininum_balance':atm_machine.minimum_balance,
-        'location':atm_machine.location,
-    }
+    context = { 'atm_machines': atm_machine,} 
     return render(request,'admininstrator/atm-machine-status.html', context)
 
+@staff_member_required
 def view_transaction_history(request):
     form = TransactionSearchForm(request.POST or None)
     history = None
@@ -83,3 +40,12 @@ def view_transaction_history(request):
         'message':message
     }
     return render(request,'admininstrator/view-transaction-history.html',context)
+
+
+def update_status(request,atm_machine_uid):
+    if request.method == 'POST':
+        new_status = request.POST.get('status')
+        atm_machine = ATMMachine.objects.get(atm_machine_uid=atm_machine_uid)
+        atm_machine.status = new_status
+        atm_machine.save()
+    return redirect('atm-machine-status')

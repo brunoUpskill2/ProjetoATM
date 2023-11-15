@@ -1,28 +1,47 @@
 {% extends "admininstrator/base.html" %}
 {% block content %}
     <h1> ATM Machine Status </h1>
-    <table>
-    <tr>
-        <th>Status</th>
-        <th>Machine ID</th>
-        <th>Current Balance</th>
-        <th>Min. Balance</th>
-        <th>Location</th>
-       
-    </tr>
-    <tr>
-        <th>{{status}}</th>
-        <th>{{atm_machine_uid}}</th>
-        <th>{{current_balance}}</th>
-        <th>{{mininum_balance}}</th>
-        <th>{{location}}</th>
-       
-    </tr>
+    <table class="table">
+        <thead class="thead-dark" >
+            <tr>
+                <td scope="col">Machine ID</td>
+                <td scope="col">Status</td>
+                <td scope="col">Current Balance</td>
+                <td scope="col">Min. Balance</td>
+                <td scope="col">Location</td>
+            </tr>
+        </thead>    
+        <tbody>
+            {% for atm_machine in atm_machines %}
+            <tr>
+                <td scope="row">{{atm_machine.atm_machine_uid}}</td>
+                <td>{{ atm_machine.status }}</td>
+                <td>{{ atm_machine.current_balance }}</td>
+                <td>{{ atm_machine.minimum_balance }}</td>
+                <td>{{ atm_machine.location }}</td>
+                <td>
+                    <form method="post" action="{% url 'update_status' atm_machine.atm_machine_uid %}">
+                        {% csrf_token %}
+                        <select name="status">
+                            <option value="active" {% if "active" == atm_machine.status %}selected{% endif %}>Active</option>
+                            <option value="deactivated" {% if "deactivated" == atm_machine.status %}selected{% endif %}>Deactivated</option>
+                        </select>                        
+                        <button type="submit" class="btn btn-sm btn-primary">Update Status</button>
+                    </form>
+                </td>
+            </tr>
+           
+        {% endfor %}
+        </tbody>
     </table>
+
+
+     
+
     <div class = 'row'>
         <div class = 'col'> 
             <a href = "{% url 'base' %}" class = 'btn btn-primary mt-5'> Back </a>
         </div> 
     </div>
-        
+    
 {% endblock content %}
